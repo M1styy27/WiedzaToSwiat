@@ -17,11 +17,15 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem}
   .tile{background:#fff;color:#222;text-align:left;padding:1rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1);font-size:1rem}
   .tile:hover{box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .tile small{display:block;color:#666;margin-top:.2rem}
   .list{display:flex;flex-direction:column;gap:.6rem}
   .card{background:#fff;padding:1.2rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
   .card h2{margin-top:0;font-size:1.2rem}
   .card .txt{white-space:pre-line}
-  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+  .bar{height:6px;background:#dde3ee;border-radius:3px;margin-bottom:1rem;overflow:hidden}
+  .bar div{height:100%;background:#2563eb}
+  .meta{color:#666;font-size:.9rem;margin:.3rem 0}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;gap:.5rem}
   small a{color:#555}
 </style>
 </head>
@@ -31,6 +35,9 @@
 <div id="out"></div>
 
 <script>
+const MAX_SLIDES = 10;   // maksymalnie slajdów w jednej lekcji
+const MAX_CHARS = 600;   // orientacyjna długość slajdu
+
 // Katalog: [nazwa dla użytkownika, tytuł artykułu w Wikipedii]
 const CATALOG = [
   { name: '💻 Informatyka', topics: [
@@ -87,12 +94,65 @@ function el(tag, text, cls) {
   return e;
 }
 
+/* ---------- dzielenie tekstu na slajdy i lekcje ---------- */
+
+function splitText(text) {
+  const paras = text.split(/\n+/).map(s => s.trim()).filter(Boolean);
+  const pieces = [];
+  paras.forEach(p => {
+    if (p.length <= MAX_CHARS * 1.4) { pieces.push(p); return; }
+    let cur = '';
+    p.split(/(?<=[.!?])\s+/).forEach(s => {
+      if (cur && (cur + ' ' + s).length > MAX_CHARS) { pieces.push(cur); cur = s; }
+      else cur = cur ? cur + ' ' + s : s;
+    });
+    if (cur) pieces.push(cur);
+  });
+  const chunks = [];
+  let cur = '';
+  pieces.forEach(p => {
+    if (cur && (cur.length + p.length) > MAX_CHARS) { chunks.push(cur); cur = p; }
+    else cur = cur ? cur + '\n\n' + p : p;
+  });
+  if (cur) chunks.push(cur);
+  return chunks;
+}
+
+function buildLessons(sections) {
+  const lessons = [];
+  let cur = { slides: [], names: [] };
+  const push = () => {
+    if (cur.slides.length) lessons.push(cur);
+    cur = { slides: [], names: [] };
+  };
+  sections.forEach(sec => {
+    const n = sec.slides.length;
+    if (n > MAX_SLIDES) {            // bardzo długa sekcja -> osobne lekcje
+      push();
+      for (let k = 0; k < n; k += MAX_SLIDES) {
+        const part = k / MAX_SLIDES + 1;
+        lessons.push({
+          slides: sec.slides.slice(k, k + MAX_SLIDES).map(t => ({ h: sec.h, t })),
+          names: [sec.h + ' (cz. ' + part + ')'],
+        });
+      }
+      return;
+    }
+    if (cur.slides.length + n > MAX_SLIDES) push();
+    sec.slides.forEach(t => cur.slides.push({ h: sec.h, t }));
+    cur.names.push(sec.h);
+  });
+  push();
+  return lessons;
+}
+
+/* ---------- ekrany ---------- */
+
 function showHome() {
   out.replaceChildren();
   const form = el('form');
   const input = el('input'); input.placeholder = 'Szukaj własnego tematu...';
-  const btn = el('button', 'Szukaj');
-  form.append(input, btn);
+  form.append(input, el('button', 'Szukaj'));
   form.onsubmit = e => {
     e.preventDefault();
     const q = input.value.trim();
@@ -111,14 +171,13 @@ function showCategory(cat) {
   out.replaceChildren();
   const back = el('button', '← Wszystkie kategorie', 'ghost');
   back.onclick = showHome;
-  const h = el('h2', cat.name);
   const list = el('div', undefined, 'list');
   cat.topics.forEach(([label, wiki]) => {
     const t = el('button', label, 'tile');
     t.onclick = () => loadArticle(wiki, label, cat);
     list.append(t);
   });
-  out.append(back, h, list);
+  out.append(back, el('h2', cat.name), list);
 }
 
 async function loadArticle(wiki, label, cat) {
@@ -135,39 +194,77 @@ async function loadArticle(wiki, label, cat) {
       return;
     }
     const parts = p.extract.split(/\n=+ (.+?) =+\n/);
-    const cards = [{ h: label, t: parts[0].trim() }];
+    const sections = [{ h: label, slides: splitText(parts[0]) }];
     for (let k = 1; k < parts.length; k += 2) {
       const body = (parts[k + 1] || '').trim();
-      if (body && !skip.includes(parts[k])) cards.push({ h: parts[k], t: body });
+      if (body && !skip.includes(parts[k])) sections.push({ h: parts[k], slides: splitText(body) });
     }
-    showCard(cards, 0, p.title, cat);
+    const art = {
+      label, cat, title: p.title,
+      lessons: buildLessons(sections.filter(s => s.slides.length)),
+    };
+    showLessons(art);
   } catch (e) {
     out.textContent = 'Błąd pobierania danych.';
   }
 }
 
-function showCard(cards, i, title, cat) {
+function showLessons(art) {
   out.replaceChildren();
-  const back = el('button', cat ? '← ' + cat.name : '← Wszystkie kategorie', 'ghost');
-  back.onclick = () => cat ? showCategory(cat) : showHome();
+  const back = el('button', art.cat ? '← ' + art.cat.name : '← Wszystkie kategorie', 'ghost');
+  back.onclick = () => art.cat ? showCategory(art.cat) : showHome();
+  const list = el('div', undefined, 'list');
+  art.lessons.forEach((l, i) => {
+    const names = l.names.slice(0, 3).join(', ') + (l.names.length > 3 ? '…' : '');
+    const t = el('button', 'Lekcja ' + (i + 1) + ': ' + names, 'tile');
+    t.append(el('small', l.slides.length + ' slajd' + (l.slides.length === 1 ? '' : l.slides.length < 5 ? 'y' : 'ów')));
+    t.onclick = () => showSlide(art, i, 0);
+    list.append(t);
+  });
+  out.append(back, el('h2', art.label), el('p', 'Lekcji: ' + art.lessons.length + ' (maks. ' + MAX_SLIDES + ' slajdów każda)', 'meta'), list, sourceLine(art));
+}
+
+function showSlide(art, li, si) {
+  out.replaceChildren();
+  const lesson = art.lessons[li];
+  const total = lesson.slides.length;
+  const back = el('button', '← Lista lekcji', 'ghost');
+  back.onclick = () => showLessons(art);
+
+  const bar = el('div', undefined, 'bar');
+  const fill = el('div'); fill.style.width = ((si + 1) / total * 100) + '%';
+  bar.append(fill);
 
   const card = el('div', undefined, 'card');
-  card.append(el('h2', cards[i].h), el('div', cards[i].t, 'txt'));
+  card.append(el('h2', lesson.slides[si].h), el('div', lesson.slides[si].t, 'txt'));
 
   const nav = el('div', undefined, 'nav');
-  const prev = el('button', 'Wstecz'); prev.disabled = i === 0;
-  const next = el('button', 'Dalej'); next.disabled = i === cards.length - 1;
-  prev.onclick = () => { showCard(cards, i - 1, title, cat); window.scrollTo(0, 0); };
-  next.onclick = () => { showCard(cards, i + 1, title, cat); window.scrollTo(0, 0); };
-  nav.append(prev, el('span', (i + 1) + ' / ' + cards.length), next);
+  const prev = el('button', 'Wstecz'); prev.disabled = si === 0;
+  prev.onclick = () => { showSlide(art, li, si - 1); window.scrollTo(0, 0); };
+  let nextLabel = 'Dalej', nextAction = () => showSlide(art, li, si + 1);
+  if (si === total - 1) {
+    if (li < art.lessons.length - 1) {
+      nextLabel = 'Następna lekcja →';
+      nextAction = () => showSlide(art, li + 1, 0);
+    } else {
+      nextLabel = 'Koniec ✓';
+      nextAction = () => showLessons(art);
+    }
+  }
+  const next = el('button', nextLabel);
+  next.onclick = () => { nextAction(); window.scrollTo(0, 0); };
+  nav.append(prev, el('span', (si + 1) + ' / ' + total), next);
 
-  const src = el('p'); const sm = el('small', 'Źródło: ');
-  const a = el('a', 'Wikipedia: ' + title);
-  a.href = 'https://pl.wikipedia.org/wiki/' + encodeURIComponent(title);
+  out.append(back, el('p', art.label + ' · Lekcja ' + (li + 1) + ' z ' + art.lessons.length, 'meta'), bar, card, nav, sourceLine(art));
+}
+
+function sourceLine(art) {
+  const p = el('p'); const sm = el('small', 'Źródło: ');
+  const a = el('a', 'Wikipedia: ' + art.title);
+  a.href = 'https://pl.wikipedia.org/wiki/' + encodeURIComponent(art.title);
   a.target = '_blank'; a.rel = 'noopener';
-  sm.append(a, ' (CC BY-SA)'); src.append(sm);
-
-  out.append(back, card, nav, src);
+  sm.append(a, ' (CC BY-SA)'); p.append(sm);
+  return p;
 }
 
 document.getElementById('home').onclick = e => { e.preventDefault(); showHome(); };
