@@ -1,15 +1,73 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wiedza codziennie</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 3rem auto; padding: 0 1rem; line-height: 1.6; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiedza codziennie</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:600px;margin:2rem auto;padding:0 1rem;line-height:1.6;background:#f6f7f9;color:#222}
+  h1{font-size:1.5rem}
+  form{display:flex;gap:.5rem;margin-bottom:1rem}
+  input{flex:1;padding:.6rem;font-size:1rem;border:1px solid #ccc;border-radius:8px}
+  button{padding:.6rem 1rem;font-size:1rem;border:0;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}
+  button:disabled{background:#a9bde8;cursor:default}
+  .card{background:#fff;padding:1.2rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .card h2{margin-top:0;font-size:1.2rem}
+  .card .txt{white-space:pre-line}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+  small a{color:#555}
+</style>
 </head>
 <body>
-  <h1>Wiedza codziennie</h1>
-  <p>Tu będą mini lekcje z Wikipedii. Pierwsza: Czemu śnimy?</p>
+<h1>Wiedza codziennie</h1>
+<form id="f">
+  <input id="q" value="Sen" placeholder="Temat z Wikipedii">
+  <button>Pokaż</button>
+</form>
+<div id="out"></div>
+
+<script>
+const out = document.getElementById('out');
+const skip = ['Przypisy','Bibliografia','Linki zewnętrzne','Zobacz też','Uwagi'];
+let cards = [], i = 0, title = '';
+
+async function load(t) {
+  out.textContent = 'Ładuję...';
+  const url = 'https://pl.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&format=json&origin=*&titles=' + encodeURIComponent(t);
+  try {
+    const d = await (await fetch(url)).json();
+    const p = Object.values(d.query.pages)[0];
+    if (p.missing !== undefined || !p.extract) { out.textContent = 'Nie znaleziono artykułu.'; return; }
+    title = p.title;
+    const parts = p.extract.split(/\n=+ (.+?) =+\n/);
+    cards = [{ h: 'Wstęp: ' + title, t: parts[0].trim() }];
+    for (let k = 1; k < parts.length; k += 2) {
+      const body = (parts[k + 1] || '').trim();
+      if (body && !skip.includes(parts[k])) cards.push({ h: parts[k], t: body });
+    }
+    i = 0;
+    show();
+  } catch (e) {
+    out.textContent = 'Błąd pobierania danych.';
+  }
+}
+
+function show() {
+  const c = cards[i];
+  out.innerHTML = '<div class="card"><h2></h2><div class="txt"></div></div>' +
+    '<div class="nav"><button id="prev">Wstecz</button><span>' + (i + 1) + ' / ' + cards.length + '</span><button id="next">Dalej</button></div>' +
+    '<p><small>Źródło: <a target="_blank" rel="noopener" href="https://pl.wikipedia.org/wiki/' + encodeURIComponent(title) + '">Wikipedia: ' + title.replace(/</g, '&lt;') + '</a> (CC BY-SA)</small></p>';
+  out.querySelector('h2').textContent = c.h;
+  out.querySelector('.txt').textContent = c.t;
+  const prev = document.getElementById('prev'), next = document.getElementById('next');
+  prev.disabled = i === 0;
+  next.disabled = i === cards.length - 1;
+  prev.onclick = () => { i--; show(); window.scrollTo(0, 0); };
+  next.onclick = () => { i++; show(); window.scrollTo(0, 0); };
+}
+
+document.getElementById('f').onsubmit = e => { e.preventDefault(); load(document.getElementById('q').value.trim()); };
+load('Sen');
+</script>
 </body>
 </html>
