@@ -21,23 +21,24 @@
   .list{display:flex;flex-direction:column;gap:.6rem}
   .card{background:#fff;padding:1.2rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
   .card h2{margin-top:0;font-size:1.2rem}
-  .card .txt{white-space:pre-line}
+  .txt{white-space:pre-line}
   .bar{height:6px;background:#dde3ee;border-radius:3px;margin-bottom:1rem;overflow:hidden}
   .bar div{height:100%;background:#2563eb}
   .meta{color:#666;font-size:.9rem;margin:.3rem 0}
+  .note{color:#666;font-size:.85rem}
   .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;gap:.5rem}
+  .opt:disabled{background:#fff;color:#222;cursor:default}
+  .opt.ok{background:#d1fae5}
+  .opt.bad{background:#fee2e2}
   small a{color:#555}
 </style>
 </head>
 <body>
 <h1><a href="#" id="home">Wiedza codziennie</a></h1>
-<p class="sub">Wybierz kategorię, potem temat.</p>
+<p class="sub" id="stats"></p>
 <div id="out"></div>
 
 <script>
-const MAX_SLIDES = 10;   // maksymalnie slajdów w jednej lekcji
-const MAX_CHARS = 600;   // orientacyjna długość slajdu
-
 // Katalog: [nazwa dla użytkownika, tytuł artykułu w Wikipedii]
 const CATALOG = [
   { name: '💻 Informatyka', topics: [
@@ -85,7 +86,7 @@ const CATALOG = [
 ];
 
 const out = document.getElementById('out');
-const skip = ['Przypisy','Bibliografia','Linki zewnętrzne','Zobacz też','Uwagi'];
+const statsEl = document.getElementById('stats');
 
 function el(tag, text, cls) {
   const e = document.createElement(tag);
@@ -94,61 +95,53 @@ function el(tag, text, cls) {
   return e;
 }
 
-/* ---------- dzielenie tekstu na slajdy i lekcje ---------- */
-
-function splitText(text) {
-  const paras = text.split(/\n+/).map(s => s.trim()).filter(Boolean);
-  const pieces = [];
-  paras.forEach(p => {
-    if (p.length <= MAX_CHARS * 1.4) { pieces.push(p); return; }
-    let cur = '';
-    p.split(/(?<=[.!?])\s+/).forEach(s => {
-      if (cur && (cur + ' ' + s).length > MAX_CHARS) { pieces.push(cur); cur = s; }
-      else cur = cur ? cur + ' ' + s : s;
-    });
-    if (cur) pieces.push(cur);
-  });
-  const chunks = [];
-  let cur = '';
-  pieces.forEach(p => {
-    if (cur && (cur.length + p.length) > MAX_CHARS) { chunks.push(cur); cur = p; }
-    else cur = cur ? cur + '\n\n' + p : p;
-  });
-  if (cur) chunks.push(cur);
-  return chunks;
+async function api(params) {
+  const r = await fetch('/api?' + new URLSearchParams(params));
+  return r.json();
 }
 
-function buildLessons(sections) {
-  const lessons = [];
-  let cur = { slides: [], names: [] };
-  const push = () => {
-    if (cur.slides.length) lessons.push(cur);
-    cur = { slides: [], names: [] };
-  };
-  sections.forEach(sec => {
-    const n = sec.slides.length;
-    if (n > MAX_SLIDES) {            // bardzo długa sekcja -> osobne lekcje
-      push();
-      for (let k = 0; k < n; k += MAX_SLIDES) {
-        const part = k / MAX_SLIDES + 1;
-        lessons.push({
-          slides: sec.slides.slice(k, k + MAX_SLIDES).map(t => ({ h: sec.h, t })),
-          names: [sec.h + ' (cz. ' + part + ')'],
-        });
-      }
-      return;
-    }
-    if (cur.slides.length + n > MAX_SLIDES) push();
-    sec.slides.forEach(t => cur.slides.push({ h: sec.h, t }));
-    cur.names.push(sec.h);
-  });
-  push();
-  return lessons;
+/* ---------- postępy (zapis w przeglądarce) ---------- */
+
+const LS_KEY = 'wc_progress_v1';
+const today = () => new Date().toLocaleDateString('sv-SE');
+const yesterday = () => new Date(Date.now() - 864e5).toLocaleDateString('sv-SE');
+const daysWord = n => n === 1 ? 'dzień' : 'dni';
+
+function loadP() {
+  try {
+    const p = JSON.parse(localStorage.getItem(LS_KEY));
+    if (p && p.done && p.streak) return p;
+  } catch (e) {}
+  return { done: {}, streak: { last: '', count: 0 } };
+}
+function saveP(p) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(p)); } catch (e) {}
+}
+function markDone(title, n, score, total) {
+  const p = loadP();
+  p.done[title + '#' + n] = { score, total, at: today() };
+  if (p.streak.last !== today()) {
+    p.streak.count = p.streak.last === yesterday() ? p.streak.count + 1 : 1;
+    p.streak.last = today();
+  }
+  saveP(p);
+}
+function streakInfo() {
+  const s = loadP().streak;
+  const active = s.last === today() || s.last === yesterday();
+  return active ? s.count : 0;
+}
+function renderStats() {
+  const done = Object.keys(loadP().done).length;
+  const s = streakInfo();
+  statsEl.textContent = (s ? '🔥 Seria: ' + s + ' ' + daysWord(s) + ' · ' : '') +
+    'Ukończone lekcje: ' + done;
 }
 
 /* ---------- ekrany ---------- */
 
 function showHome() {
+  renderStats();
   out.replaceChildren();
   const form = el('form');
   const input = el('input'); input.placeholder = 'Szukaj własnego tematu...';
@@ -182,52 +175,57 @@ function showCategory(cat) {
 
 async function loadArticle(wiki, label, cat) {
   out.textContent = 'Ładuję...';
-  const url = 'https://pl.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&format=json&origin=*&titles=' + encodeURIComponent(wiki);
   try {
-    const d = await (await fetch(url)).json();
-    const p = Object.values(d.query.pages)[0];
-    if (p.missing !== undefined || !p.extract) {
-      out.textContent = 'Nie znaleziono artykułu.';
-      const b = el('button', '← Wróć', 'ghost');
-      b.onclick = () => cat ? showCategory(cat) : showHome();
-      out.append(el('br'), b);
-      return;
-    }
-    const parts = p.extract.split(/\n=+ (.+?) =+\n/);
-    const sections = [{ h: label, slides: splitText(parts[0]) }];
-    for (let k = 1; k < parts.length; k += 2) {
-      const body = (parts[k + 1] || '').trim();
-      if (body && !skip.includes(parts[k])) sections.push({ h: parts[k], slides: splitText(body) });
-    }
-    const art = {
-      label, cat, title: p.title,
-      lessons: buildLessons(sections.filter(s => s.slides.length)),
-    };
-    showLessons(art);
+    const d = await api({ action: 'lessons', title: wiki });
+    if (d.error) throw new Error(d.error);
+    showLessons({ label, cat, title: d.title, lessons: d.lessons });
   } catch (e) {
-    out.textContent = 'Błąd pobierania danych.';
+    out.replaceChildren();
+    const b = el('button', '← Wróć', 'ghost');
+    b.onclick = () => cat ? showCategory(cat) : showHome();
+    out.append(el('p', 'Nie znaleziono artykułu lub wystąpił błąd.'), b);
   }
 }
 
 function showLessons(art) {
+  renderStats();
   out.replaceChildren();
   const back = el('button', art.cat ? '← ' + art.cat.name : '← Wszystkie kategorie', 'ghost');
   back.onclick = () => art.cat ? showCategory(art.cat) : showHome();
+  const done = loadP().done;
   const list = el('div', undefined, 'list');
   art.lessons.forEach((l, i) => {
     const names = l.names.slice(0, 3).join(', ') + (l.names.length > 3 ? '…' : '');
-    const t = el('button', 'Lekcja ' + (i + 1) + ': ' + names, 'tile');
-    t.append(el('small', l.slides.length + ' slajd' + (l.slides.length === 1 ? '' : l.slides.length < 5 ? 'y' : 'ów')));
-    t.onclick = () => showSlide(art, i, 0);
+    const d = done[art.title + '#' + i];
+    const t = el('button', (d ? '✓ ' : '') + 'Lekcja ' + (i + 1) + ': ' + names, 'tile');
+    if (d && d.total) t.append(el('small', 'Quiz: ' + d.score + ' / ' + d.total));
+    t.onclick = () => openLesson(art, i);
     list.append(t);
   });
-  out.append(back, el('h2', art.label), el('p', 'Lekcji: ' + art.lessons.length + ' (maks. ' + MAX_SLIDES + ' slajdów każda)', 'meta'), list, sourceLine(art));
+  out.append(back, el('h2', art.label),
+    el('p', 'Lekcji: ' + art.lessons.length + ' (maks. 10 slajdów każda)', 'meta'),
+    list, sourceLine(art));
 }
 
-function showSlide(art, li, si) {
+async function openLesson(art, li) {
   out.replaceChildren();
-  const lesson = art.lessons[li];
-  const total = lesson.slides.length;
+  out.append(el('p', 'Przygotowuję lekcję... Za pierwszym razem może to potrwać kilkanaście sekund. Potem lekcja jest zapisana i otwiera się od razu.'));
+  try {
+    const data = await api({ action: 'lesson', title: art.title, n: li });
+    if (data.error) throw new Error(data.error);
+    window.scrollTo(0, 0);
+    showSlide(art, li, data, 0);
+  } catch (e) {
+    out.replaceChildren();
+    const b = el('button', '← Lista lekcji', 'ghost');
+    b.onclick = () => showLessons(art);
+    out.append(el('p', 'Nie udało się pobrać lekcji. Spróbuj ponownie za chwilę.'), b);
+  }
+}
+
+function showSlide(art, li, data, si) {
+  out.replaceChildren();
+  const total = data.slides.length;
   const back = el('button', '← Lista lekcji', 'ghost');
   back.onclick = () => showLessons(art);
 
@@ -236,26 +234,89 @@ function showSlide(art, li, si) {
   bar.append(fill);
 
   const card = el('div', undefined, 'card');
-  card.append(el('h2', lesson.slides[si].h), el('div', lesson.slides[si].t, 'txt'));
+  card.append(el('h2', data.slides[si].h), el('div', data.slides[si].t, 'txt'));
 
   const nav = el('div', undefined, 'nav');
   const prev = el('button', 'Wstecz'); prev.disabled = si === 0;
-  prev.onclick = () => { showSlide(art, li, si - 1); window.scrollTo(0, 0); };
-  let nextLabel = 'Dalej', nextAction = () => showSlide(art, li, si + 1);
+  prev.onclick = () => { showSlide(art, li, data, si - 1); window.scrollTo(0, 0); };
+  let nextLabel = 'Dalej', nextAction = () => showSlide(art, li, data, si + 1);
   if (si === total - 1) {
-    if (li < art.lessons.length - 1) {
-      nextLabel = 'Następna lekcja →';
-      nextAction = () => showSlide(art, li + 1, 0);
+    if (data.quiz && data.quiz.length) {
+      nextLabel = 'Quiz →';
+      nextAction = () => showQuiz(art, li, data, 0, 0);
     } else {
-      nextLabel = 'Koniec ✓';
-      nextAction = () => showLessons(art);
+      nextLabel = 'Zakończ ✓';
+      nextAction = () => finishLesson(art, li, 0, 0);
     }
   }
   const next = el('button', nextLabel);
   next.onclick = () => { nextAction(); window.scrollTo(0, 0); };
   nav.append(prev, el('span', (si + 1) + ' / ' + total), next);
 
-  out.append(back, el('p', art.label + ' · Lekcja ' + (li + 1) + ' z ' + art.lessons.length, 'meta'), bar, card, nav, sourceLine(art));
+  const note = el('p', data.source === 'wikipedia'
+    ? 'Wersja podstawowa: surowy tekst z Wikipedii (lekcja AI chwilowo niedostępna).'
+    : 'Lekcja przygotowana przez AI na podstawie Wikipedii. W razie wątpliwości sprawdź oryginał.', 'note');
+
+  out.append(back, el('p', art.label + ' · Lekcja ' + (li + 1) + ' z ' + art.lessons.length, 'meta'),
+    bar, card, nav, note, sourceLine(art));
+}
+
+function showQuiz(art, li, data, qi, score) {
+  out.replaceChildren();
+  const q = data.quiz[qi];
+  const last = qi === data.quiz.length - 1;
+  const card = el('div', undefined, 'card');
+  card.append(el('p', 'Quiz · pytanie ' + (qi + 1) + ' z ' + data.quiz.length, 'meta'), el('h2', q.q));
+
+  const opts = el('div', undefined, 'list');
+  const info = el('p', undefined, 'txt');
+  const next = el('button', last ? 'Zobacz wynik' : 'Dalej');
+  next.style.display = 'none';
+
+  const btns = q.options.map((o, idx) => {
+    const b = el('button', o, 'tile opt');
+    b.onclick = () => {
+      const good = idx === q.answer;
+      btns.forEach((x, j) => { x.disabled = true; if (j === q.answer) x.classList.add('ok'); });
+      if (!good) b.classList.add('bad');
+      info.textContent = (good ? 'Dobrze! ' : 'Nie tym razem. ') + (q.why || '');
+      const sc = score + (good ? 1 : 0);
+      next.style.display = '';
+      next.onclick = () => {
+        if (last) finishLesson(art, li, sc, data.quiz.length);
+        else showQuiz(art, li, data, qi + 1, sc);
+        window.scrollTo(0, 0);
+      };
+    };
+    opts.append(b);
+    return b;
+  });
+
+  card.append(opts, info);
+  const nav = el('div', undefined, 'nav'); nav.append(next);
+  out.append(card, nav);
+}
+
+function finishLesson(art, li, score, total) {
+  markDone(art.title, li, score, total);
+  renderStats();
+  out.replaceChildren();
+  const card = el('div', undefined, 'card');
+  card.append(el('h2', 'Lekcja ukończona 🎉'));
+  if (total) card.append(el('p', 'Wynik quizu: ' + score + ' / ' + total));
+  const s = streakInfo();
+  card.append(el('p', '🔥 Seria: ' + s + ' ' + daysWord(s) + ' z rzędu'));
+
+  const nav = el('div', undefined, 'nav');
+  const list = el('button', 'Lista lekcji');
+  list.onclick = () => showLessons(art);
+  nav.append(list);
+  if (li < art.lessons.length - 1) {
+    const n = el('button', 'Następna lekcja →');
+    n.onclick = () => openLesson(art, li + 1);
+    nav.append(n);
+  }
+  out.append(card, nav);
 }
 
 function sourceLine(art) {
