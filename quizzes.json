@@ -1,0 +1,212 @@
+{
+  "Programowanie komputerów": [
+    {"q":"Czym jest kod źródłowy?","o":["Tekstem programu zapisanym w języku programowania","Gotowym plikiem wykonywalnym","Hasłem dostępu do komputera"],"a":0,"w":"Kod źródłowy to zapis programu w języku programowania, który kompilator lub interpreter zamienia na działający program."},
+    {"q":"Co robi kompilator?","o":["Automatycznie naprawia błędy w programie","Tłumaczy kod źródłowy na postać zrozumiałą dla komputera","Przyspiesza działanie procesora"],"a":1,"w":"Kompilator przekształca kod źródłowy na kod maszynowy lub pośredni."},
+    {"q":"Jak po angielsku nazywa się błąd w programie?","o":["Patch","Wirus","Bug"],"a":2,"w":"Błąd to po angielsku bug, a jego szukanie i usuwanie to debugowanie."},
+    {"q":"Który z wymienionych jest językiem programowania?","o":["Python","JPEG","Wi-Fi"],"a":0,"w":"Python to popularny język programowania, a JPEG i Wi-Fi to format obrazu i technologia sieciowa."},
+    {"q":"Do czego służy pętla w programowaniu?","o":["Do trwałego zapisu pliku","Do powtarzania fragmentu kodu","Do zmiany nazwy zmiennej"],"a":1,"w":"Pętla pozwala wykonać ten sam fragment kodu wiele razy, np. dla każdego elementu listy."}
+  ],
+  "Algorytm": [
+    {"q":"Czym jest algorytm?","o":["Skończonym ciągiem kroków prowadzącym do rozwiązania problemu","Rodzajem języka programowania","Częścią sprzętu komputerowego"],"a":0,"w":"Algorytm to jednoznaczny opis kroków potrzebnych do rozwiązania zadania."},
+    {"q":"Od czego pochodzi słowo algorytm?","o":["Od nazwy pierwszego komputera","Od nazwiska perskiego uczonego al-Chuwarizmiego","Od greckiego słowa oznaczającego liczbę"],"a":1,"w":"Nazwa wywodzi się od nazwiska średniowiecznego uczonego al-Chuwarizmiego."},
+    {"q":"Jaką graficzną formą często przedstawia się algorytm?","o":["Wykresem kołowym","Diagramem Venna","Schematem blokowym"],"a":2,"w":"Schemat blokowy pokazuje kroki algorytmu i decyzje w postaci połączonych bloków."},
+    {"q":"Co oznacza złożoność obliczeniowa algorytmu?","o":["Ile zasobów, np. czasu lub pamięci, potrzebuje algorytm","Jak trudny jest kod do przeczytania","Ile linijek ma program"],"a":0,"w":"Złożoność pozwala porównać algorytmy pod względem zużycia czasu i pamięci."},
+    {"q":"Który z podanych algorytmów służy do sortowania?","o":["Algorytm Euklidesa","Sortowanie bąbelkowe","Szyfr Cezara"],"a":1,"w":"Sortowanie bąbelkowe porządkuje elementy, a algorytm Euklidesa liczy NWD."}
+  ],
+  "Internet": [
+    {"q":"Co oznacza skrót WWW?","o":["World Wide Web","Wide Web Window","World Web Wire"],"a":0,"w":"WWW to World Wide Web, czyli ogólnoświatowa sieć dokumentów połączonych linkami."},
+    {"q":"Co robi serwer DNS?","o":["Szyfruje wszystkie hasła","Zamienia nazwy domen na adresy IP","Przechowuje zdjęcia użytkowników"],"a":1,"w":"DNS tłumaczy nazwy stron, np. wikipedia.org, na adresy IP, których używają komputery."},
+    {"q":"Która sieć była prekursorem internetu?","o":["Ethernet","Bluetooth","ARPANET"],"a":2,"w":"ARPANET powstała w USA pod koniec lat 60. XX wieku."},
+    {"q":"Kto stworzył World Wide Web?","o":["Tim Berners-Lee","Bill Gates","Steve Jobs"],"a":0,"w":"Tim Berners-Lee wymyślił WWW pod koniec lat 80. podczas pracy w CERN."},
+    {"q":"Do czego służy protokół HTTP?","o":["Do wysyłania poczty głosowej","Do przesyłania stron internetowych","Do szyfrowania dysku"],"a":1,"w":"HTTP to protokół, którym przeglądarka pobiera strony z serwerów."}
+  ],
+  "Sztuczna inteligencja": [
+    {"q":"Kto zaproponował słynny test sprawdzający, czy maszyna potrafi myśleć jak człowiek?","o":["Nikola Tesla","Isaac Newton","Alan Turing"],"a":2,"w":"Test Turinga zaproponował w 1950 roku brytyjski matematyk Alan Turing."},
+    {"q":"W którym roku odbyła się konferencja w Dartmouth, uznawana za narodziny AI jako dziedziny?","o":["1956","1985","2005"],"a":0,"w":"W 1956 roku podczas konferencji w Dartmouth College użyto określenia sztuczna inteligencja."},
+    {"q":"Czym jest uczenie maszynowe?","o":["Nauką obsługi komputera przez dzieci","Metodą, w której system uczy się na danych zamiast działać wg ręcznie wpisanych reguł","Budową fizycznych robotów"],"a":1,"w":"W uczeniu maszynowym model wyciąga wzorce z danych i na tej podstawie podejmuje decyzje."},
+    {"q":"Który komputer w 1997 roku pokonał mistrza świata w szachach Garriego Kasparowa?","o":["AlphaGo","Deep Blue","Siri"],"a":1,"w":"Deep Blue firmy IBM wygrał mecz z Kasparowem w 1997 roku."},
+    {"q":"W jakiej grze w 2016 roku program AlphaGo pokonał mistrza Lee Sedola?","o":["Szachy","Poker","Go"],"a":2,"w":"AlphaGo wygrał z Lee Sedolem w grze Go, uważanej za trudniejszą dla komputerów niż szachy."}
+  ],
+  "Procesor": [
+    {"q":"Co oznacza skrót CPU?","o":["Computer Power Unit","Core Program Utility","Central Processing Unit"],"a":2,"w":"CPU to Central Processing Unit, czyli centralna jednostka przetwarzająca."},
+    {"q":"W jakiej jednostce podaje się taktowanie procesora?","o":["Wat","Herc, zwykle gigaherc","Bajt"],"a":1,"w":"Taktowanie to liczba cykli na sekundę, mierzona w hercach (Hz)."},
+    {"q":"Które przedsiębiorstwo wprowadziło w 1971 roku mikroprocesor 4004?","o":["Intel","Microsoft","Sony"],"a":0,"w":"Intel 4004 uchodzi za pierwszy komercyjny mikroprocesor."},
+    {"q":"Czym są rdzenie procesora?","o":["Wentylatorami chłodzącymi","Niezależnymi jednostkami wykonującymi instrukcje","Rodzajem pamięci dyskowej"],"a":1,"w":"Wielordzeniowy procesor może wykonywać kilka zadań naraz."},
+    {"q":"Do czego służy pamięć podręczna (cache) procesora?","o":["Do trwałego przechowywania zdjęć","Do zasilania procesora","Do szybkiego dostępu do często używanych danych"],"a":2,"w":"Cache jest bardzo szybka i trzyma dane, które procesor niedawno użył lub zaraz użyje."}
+  ],
+  "Sen": [
+    {"q":"W której fazie snu występują najintensywniejsze marzenia senne?","o":["Faza REM","Głęboki sen wolnofalowy","Faza zasypiania"],"a":0,"w":"Najbardziej żywe sny pojawiają się zwykle w fazie REM."},
+    {"q":"Co oznacza skrót REM?","o":["Relaxed Energy Mode","Rapid Eye Movement, czyli szybkie ruchy gałek ocznych","Regular Eye Motion"],"a":1,"w":"W fazie REM oczy poruszają się szybko pod zamkniętymi powiekami."},
+    {"q":"Ile godzin snu potrzebuje zwykle dorosły człowiek?","o":["Około 3-4","Około 11-12","Około 7-8"],"a":2,"w":"Zapotrzebowanie jest indywidualne, ale większość dorosłych potrzebuje około 7-8 godzin."},
+    {"q":"Który hormon wydzielany przez szyszynkę reguluje rytm snu i czuwania?","o":["Insulina","Adrenalina","Melatonina"],"a":2,"w":"Melatonina jest wydzielana głównie po zmroku i sygnalizuje organizmowi porę snu."},
+    {"q":"Jak nazywa się zjawisko chodzenia podczas snu?","o":["Somnambulizm (lunatykowanie)","Narkolepsja","Bezsenność"],"a":0,"w":"Lunatykowanie to inaczej somnambulizm."}
+  ],
+  "Czarna dziura": [
+    {"q":"Co charakteryzuje czarną dziurę?","o":["Brak jakiejkolwiek masy","Grawitacja tak silna, że nawet światło nie może uciec","Bardzo wysoka temperatura powierzchni"],"a":1,"w":"Z obszaru czarnej dziury nic, nawet światło, nie może się wydostać."},
+    {"q":"Jak nazywa się granica, za którą nic nie może uciec z czarnej dziury?","o":["Pas Kuipera","Orbita geostacjonarna","Horyzont zdarzeń"],"a":2,"w":"Horyzont zdarzeń to powierzchnia bez powrotu."},
+    {"q":"Jak powstają czarne dziury o masach gwiazdowych?","o":["Z kolapsu bardzo masywnej gwiazdy","Ze zderzenia planet","Z wybuchu komety"],"a":0,"w":"Gdy masywna gwiazda wypali paliwo, jej jądro może zapaść się w czarną dziurę."},
+    {"q":"Jak nazywa się supermasywna czarna dziura w centrum naszej Galaktyki?","o":["Betelgeza","Sagittarius A*","Syriusz"],"a":1,"w":"Sagittarius A* znajduje się w centrum Drogi Mlecznej."},
+    {"q":"Kto przewidział, że czarne dziury powinny powoli emitować promieniowanie?","o":["Galileusz","Marie Curie","Stephen Hawking"],"a":2,"w":"To promieniowanie nazywa się promieniowaniem Hawkinga."}
+  ],
+  "Kwas deoksyrybonukleinowy": [
+    {"q":"Co oznacza skrót DNA?","o":["Kwas deoksyrybonukleinowy","Dynamiczny układ nukleinowy","Dwuniciowy aminokwas"],"a":0,"w":"DNA to kwas deoksyrybonukleinowy, nośnik informacji genetycznej."},
+    {"q":"Jaki kształt ma cząsteczka DNA?","o":["Kula","Podwójna helisa","Sześcian"],"a":1,"w":"DNA tworzą dwie nici skręcone w podwójną helisę."},
+    {"q":"Jakie są cztery zasady azotowe w DNA?","o":["Wodór, tlen, azot, węgiel","Alanina, glicyna, lizyna, walina","Adenina, tymina, guanina, cytozyna"],"a":2,"w":"Zasady A, T, G i C tworzą pary: A z T oraz G z C."},
+    {"q":"Którzy naukowcy w 1953 roku opisali strukturę DNA?","o":["Watson i Crick","Darwin i Mendel","Curie i Pasteur"],"a":0,"w":"James Watson i Francis Crick zaproponowali model podwójnej helisy."},
+    {"q":"Gdzie w komórce człowieka znajduje się większość DNA?","o":["W błonie komórkowej","W jądrze komórkowym","W rybosomach"],"a":1,"w":"Większość DNA jest w jądrze komórkowym, niewielka część w mitochondriach."}
+  ],
+  "Ewolucja": [
+    {"q":"Kto jest autorem dzieła O powstawaniu gatunków z 1859 roku?","o":["Karol Darwin","Gregor Mendel","Louis Pasteur"],"a":0,"w":"Karol Darwin opisał w nim teorię doboru naturalnego."},
+    {"q":"Jak nazywa się mechanizm, w którym lepiej przystosowane osobniki częściej przeżywają i się rozmnażają?","o":["Klonowanie","Dobór naturalny","Hibernacja"],"a":1,"w":"Dobór naturalny jest jednym z głównych mechanizmów ewolucji."},
+    {"q":"Co jest źródłem nowej zmienności genetycznej?","o":["Pory roku","Rodzaj diety","Mutacje"],"a":2,"w":"Zmienność powstaje m.in. przez mutacje i rekombinację genów."},
+    {"q":"Jakie ptaki z wysp Galapagos pomogły Darwinowi w rozwoju teorii?","o":["Orły","Zięby","Sowy"],"a":1,"w":"Zięby Darwina miały różne kształty dziobów dopasowane do pokarmu."},
+    {"q":"Co według teorii ewolucji łączy współczesne organizmy?","o":["Niezależne, niezmienne formy","Kosmiczne zarodniki","Wspólni przodkowie"],"a":2,"w":"Współczesne gatunki wywodzą się od wspólnych przodków."}
+  ],
+  "Układ Słoneczny": [
+    {"q":"Ile planet liczy Układ Słoneczny?","o":["Dziewięć","Osiem","Dziesięć"],"a":1,"w":"Od 2006 roku Pluton jest klasyfikowany jako planeta karłowata, więc planet jest osiem."},
+    {"q":"Która planeta jest największa?","o":["Saturn","Ziemia","Jowisz"],"a":2,"w":"Jowisz jest największą planetą Układu Słonecznego."},
+    {"q":"Która planeta znajduje się najbliżej Słońca?","o":["Merkury","Wenus","Mars"],"a":0,"w":"Merkury jest najbliżej Słońca i okrąża je najszybciej."},
+    {"q":"Co zawiera największą część masy Układu Słonecznego?","o":["Jowisz","Słońce","Pas planetoid"],"a":1,"w":"Słońce skupia ponad 99 procent masy całego układu."},
+    {"q":"Która planeta jest znana z wyraźnych, jasnych pierścieni?","o":["Mars","Merkury","Saturn"],"a":2,"w":"Pierścienie Saturna są widoczne nawet w niewielkim teleskopie."}
+  ],
+  "Pamięć": [
+    {"q":"Który rodzaj pamięci przechowuje informacje nawet przez całe życie?","o":["Pamięć długotrwała","Pamięć krótkotrwała","Pamięć sensoryczna"],"a":0,"w":"Pamięć długotrwała ma ogromną pojemność i może trzymać informacje bardzo długo."},
+    {"q":"Który psycholog badał krzywą zapominania?","o":["Zygmunt Freud","Hermann Ebbinghaus","Iwan Pawłow"],"a":1,"w":"Hermann Ebbinghaus opisał, jak szybko zapominamy materiał bez powtórek."},
+    {"q":"Co pomaga utrwalać wiedzę?","o":["Jednorazowe czytanie","Nauka tylko w nocy przed egzaminem","Powtórki rozłożone w czasie"],"a":2,"w":"Rozłożone powtórki wzmacniają ślady pamięciowe skuteczniej niż jednorazowa nauka."},
+    {"q":"Czego dotyczy pamięć deklaratywna?","o":["Faktów i wydarzeń, które da się opisać słowami","Umiejętności ruchowych","Odruchów bezwarunkowych"],"a":0,"w":"Pamięć deklaratywna obejmuje wiedzę o faktach i zdarzeniach."},
+    {"q":"Która struktura mózgu jest kluczowa dla tworzenia nowych wspomnień?","o":["Móżdżek","Hipokamp","Rdzeń kręgowy"],"a":1,"w":"Hipokamp odpowiada m.in. za zapamiętywanie nowych informacji."}
+  ],
+  "Emocja": [
+    {"q":"Które z podanych to emocje podstawowe?","o":["Głód, pragnienie, sen","Wzrost, waga, wiek","Radość, smutek, gniew, strach"],"a":2,"w":"Do emocji podstawowych zalicza się m.in. radość, smutek, gniew i strach."},
+    {"q":"Która struktura mózgu jest silnie związana z reakcją strachu?","o":["Ciało migdałowate","Móżdżek","Przysadka mózgowa"],"a":0,"w":"Ciało migdałowate bierze udział w ocenie zagrożenia i reakcjach lękowych."},
+    {"q":"Czym jest inteligencja emocjonalna?","o":["Wysokim wynikiem w testach IQ","Umiejętnością rozpoznawania i regulowania własnych oraz cudzych emocji","Brakiem odczuwania emocji"],"a":1,"w":"Inteligencja emocjonalna to zdolność radzenia sobie z emocjami swoimi i innych osób."},
+    {"q":"Czym zwykle różni się emocja od nastroju?","o":["Nie ma żadnej różnicy","Nastrój jest zawsze silniejszy od emocji","Emocje są krótsze i mają wyraźną przyczynę, nastrój trwa dłużej"],"a":2,"w":"Emocje są krótkotrwałe i wywołane bodźcem, a nastroje trwają dłużej i są słabsze."},
+    {"q":"Który układ nerwowy uruchamia reakcję walki lub ucieczki?","o":["Współczulny","Przywspółczulny","Somatyczny"],"a":0,"w":"Układ współczulny mobilizuje organizm do działania w sytuacji zagrożenia."}
+  ],
+  "Motywacja": [
+    {"q":"Na czym polega motywacja wewnętrzna?","o":["Na działaniu dla nagrody lub unikania kary","Na działaniu dla samej przyjemności lub zainteresowania","Na działaniu pod przymusem"],"a":1,"w":"Przy motywacji wewnętrznej sama czynność jest nagrodą."},
+    {"q":"Kto jest autorem hierarchii potrzeb w kształcie piramidy?","o":["Jean Piaget","Carl Jung","Abraham Maslow"],"a":2,"w":"Piramida potrzeb to koncepcja Abrahama Maslowa."},
+    {"q":"Co znajduje się na szczycie piramidy Maslowa?","o":["Samorealizacja","Potrzeby fizjologiczne","Potrzeba bezpieczeństwa"],"a":0,"w":"Na szczycie piramidy znajduje się potrzeba samorealizacji."},
+    {"q":"Z czego wynika motywacja zewnętrzna?","o":["Z osobistej pasji","Z nagród, kar i oczekiwań otoczenia","Z ciekawości"],"a":1,"w":"Motywacja zewnętrzna pochodzi od czynników spoza samej czynności."},
+    {"q":"Co pomaga utrzymać motywację?","o":["Unikanie planowania","Odkładanie zadań na później","Wyznaczanie konkretnych, osiągalnych celów"],"a":2,"w":"Jasne i realne cele ułatwiają dostrzeżenie postępów, a to podtrzymuje motywację."}
+  ],
+  "Stres": [
+    {"q":"Który hormon jest nazywany hormonem stresu?","o":["Kortyzol","Melatonina","Insulina"],"a":0,"w":"Kortyzol jest wydzielany przez nadnercza w odpowiedzi na stres."},
+    {"q":"Kto wprowadził pojęcie stresu do nauk medycznych?","o":["Marie Curie","Hans Selye","Isaac Newton"],"a":1,"w":"Hans Selye w latach 30. XX wieku opisał reakcję organizmu na stres."},
+    {"q":"Jak nazywa się szybka reakcja organizmu na zagrożenie, przygotowująca do ataku lub ucieczki?","o":["Zaśnij lub jedz","Czekaj i obserwuj","Walcz lub uciekaj"],"a":2,"w":"Reakcja walki lub ucieczki podnosi tętno i napięcie mięśni."},
+    {"q":"Jak nazywa się krótkotrwały, mobilizujący stres o pozytywnym działaniu?","o":["Dystres","Eustres","Hipostres"],"a":1,"w":"Eustres działa motywująco, a dystres obciąża organizm."},
+    {"q":"Co pomaga zmniejszać stres?","o":["Aktywność fizyczna","Całkowity brak snu","Nadmiar kofeiny"],"a":0,"w":"Ruch, sen i odpoczynek należą do skutecznych sposobów radzenia sobie ze stresem."}
+  ],
+  "Nawyk": [
+    {"q":"Czym jest nawyk?","o":["Automatycznie powtarzanym zachowaniem","Jednorazową decyzją","Rodzajem choroby"],"a":0,"w":"Nawyk to zachowanie utrwalone przez powtarzanie, wykonywane niemal bez zastanowienia."},
+    {"q":"Z jakich trzech elementów składa się pętla nawyku?","o":["Plan, cel, kara","Wskazówka, rutyna, nagroda","Start, środek, koniec"],"a":1,"w":"Wskazówka uruchamia rutynę, a nagroda ją utrwala."},
+    {"q":"Co sprzyja tworzeniu nowego nawyku?","o":["Zmiana planu każdego dnia","Robienie tego raz w miesiącu","Regularne powtarzanie w podobnych okolicznościach"],"a":2,"w":"Stały kontekst i powtarzanie ułatwiają automatyzację zachowania."},
+    {"q":"Czy istnieje jedna uniwersalna liczba dni potrzebna do wyrobienia nawyku?","o":["Nie, czas zależy od osoby i nawyku","Tak, zawsze dokładnie 21 dni","Tak, zawsze 7 dni"],"a":0,"w":"21 dni to popularny mit. Badania pokazują duże różnice, od kilku tygodni do kilku miesięcy."},
+    {"q":"Co pomaga zerwać ze złym nawykiem?","o":["Robienie go częściej","Zastąpienie go lepszą rutyną","Czekanie, aż zniknie sam"],"a":1,"w":"Łatwiej zastąpić nawyk innym zachowaniem niż go po prostu wyciąć."}
+  ],
+  "Mózgowie człowieka": [
+    {"q":"Ile mniej więcej waży mózg dorosłego człowieka?","o":["Około 300 g","Około 1,3-1,4 kg","Około 5 kg"],"a":1,"w":"Mózg dorosłego człowieka waży przeciętnie około 1,3-1,4 kg."},
+    {"q":"Jak nazywają się komórki nerwowe?","o":["Neurony","Erytrocyty","Osteocyty"],"a":0,"w":"Neurony przesyłają sygnały elektryczne i chemiczne."},
+    {"q":"Która część mózgu odpowiada głównie za koordynację ruchów i równowagę?","o":["Hipokamp","Przysadka","Móżdżek"],"a":2,"w":"Móżdżek koordynuje ruchy i pomaga utrzymać równowagę."},
+    {"q":"Co łączy dwie półkule mózgu?","o":["Opona twarda","Ciało modzelowate","Rdzeń kręgowy"],"a":1,"w":"Ciało modzelowate to pasmo włókien nerwowych łączące półkule."},
+    {"q":"Jaką mniej więcej część energii organizmu zużywa mózg?","o":["Około 20%","Około 2%","Około 80%"],"a":0,"w":"Mózg stanowi około 2% masy ciała, a zużywa około 20% energii."}
+  ],
+  "Układ odpornościowy": [
+    {"q":"Jak nazywają się krwinki białe, ważne dla odporności?","o":["Erytrocyty","Płytki krwi","Leukocyty"],"a":2,"w":"Leukocyty to komórki układu odpornościowego, m.in. limfocyty."},
+    {"q":"Jak nazywa się substancja, na którą układ odpornościowy reaguje wytworzeniem przeciwciał?","o":["Hormon","Antygen","Enzym trawienny"],"a":1,"w":"Antygen to cząsteczka rozpoznawana przez układ odpornościowy."},
+    {"q":"Na czym polega działanie szczepionki?","o":["Zastępuje układ odpornościowy","Zabija wszystkie bakterie w ciele","Uczy układ odpornościowy rozpoznawać patogen"],"a":2,"w":"Szczepionka przygotowuje odporność na spotkanie z prawdziwym patogenem."},
+    {"q":"W którym narządzie dojrzewają limfocyty T?","o":["Grasica","Trzustka","Wątroba"],"a":0,"w":"T w nazwie limfocytów T pochodzi od grasicy (thymus)."},
+    {"q":"Jak nazywa się białko wytwarzane przez limfocyty B do zwalczania patogenów?","o":["Hemoglobina","Przeciwciało","Kolagen"],"a":1,"w":"Przeciwciała, czyli immunoglobuliny, wiążą się z antygenami."}
+  ],
+  "Witaminy": [
+    {"q":"Która witamina jest wytwarzana w skórze pod wpływem światła słonecznego?","o":["Witamina C","Witamina D","Witamina B12"],"a":1,"w":"Skóra tworzy witaminę D pod wpływem promieniowania UVB."},
+    {"q":"Niedobór której witaminy powoduje szkorbut?","o":["Witaminy D","Witaminy A","Witaminy C"],"a":2,"w":"Szkorbut jest skutkiem długotrwałego braku witaminy C."},
+    {"q":"Które witaminy rozpuszczają się w tłuszczach?","o":["A, D, E, K","B i C","Wszystkie witaminy"],"a":0,"w":"Do witamin rozpuszczalnych w tłuszczach należą A, D, E i K."},
+    {"q":"Do czego prowadzi ciężki niedobór witaminy D u dzieci?","o":["Do szkorbutu","Do krzywicy","Do anemii złośliwej"],"a":1,"w":"Brak witaminy D zaburza mineralizację kości, co daje krzywicę."},
+    {"q":"Dla jakiego zmysłu szczególnie ważna jest witamina A?","o":["Słuchu","Smaku","Wzroku"],"a":2,"w":"Witamina A jest potrzebna do prawidłowego widzenia, zwłaszcza o zmierzchu."}
+  ],
+  "Mięsień": [
+    {"q":"Który mięsień jest największy w ciele człowieka pod względem masy?","o":["Mięsień pośladkowy wielki","Dwugłowy ramienia","Sercowy"],"a":0,"w":"Mięsień pośladkowy wielki jest największym mięśniem ludzkiego ciała."},
+    {"q":"Jakie są trzy rodzaje tkanki mięśniowej?","o":["Czerwona, biała i szara","Szkieletowa, sercowa i gładka","Długa, krótka i płaska"],"a":1,"w":"Człowiek ma mięśnie szkieletowe, mięsień sercowy i mięśnie gładkie."},
+    {"q":"Co dostarcza energii bezpośrednio do skurczu mięśnia?","o":["Kolagen","Hemoglobina","ATP"],"a":2,"w":"ATP to podstawowy nośnik energii w komórkach."},
+    {"q":"Jak działają mięśnie szkieletowe?","o":["Zależnie od woli","Wyłącznie odruchowo","Tylko podczas snu"],"a":0,"w":"Mięśniami szkieletowymi sterujemy świadomie."},
+    {"q":"Co łączy mięsień z kością?","o":["Więzadło","Chrząstka","Ścięgno"],"a":2,"w":"Ścięgno przenosi siłę skurczu mięśnia na kość."}
+  ],
+  "Serce": [
+    {"q":"Z ilu jam składa się serce człowieka?","o":["Z dwóch","Z czterech","Z sześciu"],"a":1,"w":"Serce ma dwa przedsionki i dwie komory."},
+    {"q":"Ile razy na minutę bije serce dorosłego w spoczynku?","o":["Około 60-100","Około 10-20","Około 150-200"],"a":0,"w":"Typowe tętno spoczynkowe dorosłego to 60-100 uderzeń na minutę."},
+    {"q":"Jaka jest główna funkcja serca?","o":["Filtruje krew","Wytwarza krew","Pompuje krew"],"a":2,"w":"Serce pompuje krew do płuc i do reszty ciała."},
+    {"q":"Jak nazywa się największa tętnica w ciele człowieka?","o":["Żyła główna","Aorta","Tętnica płucna"],"a":1,"w":"Aorta wyprowadza krew z lewej komory serca."},
+    {"q":"Co wyznacza rytm pracy serca?","o":["Węzeł zatokowo-przedsionkowy","Wątroba","Trzustka"],"a":0,"w":"Węzeł zatokowo-przedsionkowy to naturalny rozrusznik serca."}
+  ],
+  "II wojna światowa": [
+    {"q":"Kiedy wybuchła II wojna światowa?","o":["1 września 1939","28 czerwca 1914","7 grudnia 1941"],"a":0,"w":"Wojna zaczęła się od niemieckiego ataku na Polskę 1 września 1939 roku."},
+    {"q":"Atak Niemiec na które państwo rozpoczął wojnę w Europie?","o":["Francję","Polskę","Wielką Brytanię"],"a":1,"w":"Niemcy zaatakowały Polskę, a Wielka Brytania i Francja wypowiedziały im wojnę."},
+    {"q":"W którym roku zakończyła się wojna w Europie?","o":["1943","1947","1945"],"a":2,"w":"Niemcy skapitulowały w maju 1945 roku."},
+    {"q":"Które wydarzenie wciągnęło USA do wojny w 1941 roku?","o":["Bitwa pod Stalingradem","Atak na Pearl Harbor","Lądowanie w Normandii"],"a":1,"w":"Japońskie lotnictwo zaatakowało bazę Pearl Harbor 7 grudnia 1941 roku."},
+    {"q":"W którym roku alianci wylądowali w Normandii (D-Day)?","o":["1944","1940","1942"],"a":0,"w":"Lądowanie w Normandii miało miejsce 6 czerwca 1944 roku."}
+  ],
+  "Cesarstwo rzymskie": [
+    {"q":"Kto jest uważany za pierwszego cesarza rzymskiego?","o":["Oktawian August","Juliusz Cezar","Neron"],"a":0,"w":"Oktawian August objął władzę w 27 roku p.n.e. i uchodzi za pierwszego cesarza."},
+    {"q":"Jaką stolicą dysponowało Cesarstwo Wschodniorzymskie?","o":["Ateny","Konstantynopol","Kartagina"],"a":1,"w":"Konstantynopol, dzisiejszy Stambuł, był stolicą cesarstwa wschodniego."},
+    {"q":"W którym roku upadło Cesarstwo Zachodniorzymskie (według tradycyjnej daty)?","o":["1066","1492","476"],"a":2,"w":"Rok 476 uznaje się za koniec cesarstwa zachodniego."},
+    {"q":"Jakim językiem posługiwano się głównie w zachodniej części cesarstwa?","o":["Łaciną","Staroegipskim","Sanskrytem"],"a":0,"w":"Łacina była językiem Rzymu i zachodnich prowincji."},
+    {"q":"Jaka rzymska budowla służyła m.in. do walk gladiatorów?","o":["Panteon","Koloseum","Akropol"],"a":1,"w":"Koloseum to wielki amfiteatr w Rzymie."}
+  ],
+  "Średniowiecze": [
+    {"q":"Jakie ramy czasowe przyjmuje się dla średniowiecza w Europie?","o":["Od V do XV wieku","Od I do V wieku","Od XVI do XVIII wieku"],"a":0,"w":"Średniowiecze trwało mniej więcej od upadku Cesarstwa Zachodniorzymskiego do końca XV wieku."},
+    {"q":"Jak nazywa się system społeczny oparty na zależności wasala od seniora?","o":["Kapitalizm","Demokracja","Feudalizm"],"a":2,"w":"W feudalizmie senior nadawał ziemię, a wasal służył mu wojskowo."},
+    {"q":"Czym były krucjaty?","o":["Wyprawami handlowymi do Ameryki","Wyprawami wojennymi chrześcijan, głównie do Ziemi Świętej","Zwykłymi pielgrzymkami do Rzymu"],"a":1,"w":"Krucjaty były wyprawami zbrojnymi organizowanymi pod egidą Kościoła."},
+    {"q":"Jaka epidemia w XIV wieku zabiła dużą część ludności Europy?","o":["Hiszpanka","Ospa wietrzna","Czarna śmierć (dżuma)"],"a":2,"w":"Epidemia dżumy w latach 1347-1351 pochłonęła miliony ofiar."},
+    {"q":"Który styl architektury charakteryzuje się strzelistymi łukami i witrażami?","o":["Gotyk","Barok","Klasycyzm"],"a":0,"w":"Gotyk rozwinął się w średniowieczu, a jego symbolem są katedry."}
+  ],
+  "Rewolucja przemysłowa": [
+    {"q":"W którym kraju zaczęła się rewolucja przemysłowa?","o":["W Rosji","W Wielkiej Brytanii","W Chinach"],"a":1,"w":"Rewolucja przemysłowa zaczęła się w Wielkiej Brytanii w XVIII wieku."},
+    {"q":"Który wynalazek, udoskonalony przez Jamesa Watta, napędzał fabryki?","o":["Telefon","Silnik elektryczny","Maszyna parowa"],"a":2,"w":"Ulepszona maszyna parowa dała fabrykom niezależne źródło energii."},
+    {"q":"Który przemysł był jednym z pierwszych zmechanizowanych?","o":["Włókienniczy","Kosmiczny","Komputerowy"],"a":0,"w":"Mechaniczne przędzarki i krosna zmieniły produkcję tkanin."},
+    {"q":"Co stało się z ludnością w czasie rewolucji przemysłowej?","o":["Wszyscy wrócili na wieś","Wiele osób przeniosło się ze wsi do miast","Miasta opustoszały"],"a":1,"w":"Praca w fabrykach przyciągała ludzi do rosnących miast."},
+    {"q":"Który środek transportu rozwinął się dzięki napędowi parowemu w XIX wieku?","o":["Samolot","Rakieta","Kolej"],"a":2,"w":"Lokomotywy parowe zrewolucjonizowały transport towarów i ludzi."}
+  ],
+  "Zimna wojna": [
+    {"q":"Które dwa mocarstwa stały naprzeciw siebie w zimnej wojnie?","o":["USA i ZSRR","Francja i Niemcy","Chiny i Japonia"],"a":0,"w":"Zimna wojna była rywalizacją USA i ZSRR wraz z ich sojusznikami."},
+    {"q":"Który mur dzielił miasto w latach 1961-1989?","o":["Wielki Mur","Mur Berliński","Mur Hadriana"],"a":1,"w":"Mur Berliński oddzielał Berlin Wschodni od Zachodniego."},
+    {"q":"Jaki pakt militarny utworzyły państwa bloku wschodniego w 1955 roku?","o":["NATO","ONZ","Układ Warszawski"],"a":2,"w":"Układ Warszawski był odpowiedzią na NATO."},
+    {"q":"Jak nazywa się kryzys z 1962 roku, który groził wojną nuklearną?","o":["Kryzys kubański","Kryzys naftowy","Kryzys sueski"],"a":0,"w":"Kryzys kubański dotyczył radzieckich rakiet rozmieszczonych na Kubie."},
+    {"q":"W którym roku rozpadł się ZSRR?","o":["1975","1991","2001"],"a":1,"w":"ZSRR przestał istnieć w grudniu 1991 roku."}
+  ],
+  "Inflacja": [
+    {"q":"Czym jest inflacja?","o":["Ogólnym wzrostem cen i spadkiem siły nabywczej pieniądza","Spadkiem cen towarów","Wzrostem płac"],"a":0,"w":"Przy inflacji za tę samą kwotę kupimy z czasem mniej towarów."},
+    {"q":"Czym jest deflacja?","o":["Ogólnym wzrostem cen","Ogólnym spadkiem poziomu cen","Wymianą waluty"],"a":1,"w":"Deflacja to trwały spadek ogólnego poziomu cen."},
+    {"q":"Który wskaźnik najczęściej służy do mierzenia inflacji?","o":["PKB","Stopa bezrobocia","CPI, czyli wskaźnik cen towarów i usług konsumpcyjnych"],"a":2,"w":"CPI pokazuje, jak zmieniają się ceny koszyka typowych zakupów."},
+    {"q":"Jak bank centralny często walczy z wysoką inflacją?","o":["Podnosi stopy procentowe","Obniża stopy do zera","Drukuje więcej pieniędzy"],"a":0,"w":"Wyższe stopy ograniczają popyt i pomagają hamować wzrost cen."},
+    {"q":"Co dzieje się z siłą nabywczą pieniądza przy inflacji?","o":["Rośnie","Maleje","Nie zmienia się"],"a":1,"w":"Gdy ceny rosną, za tę samą kwotę kupimy mniej."}
+  ],
+  "Giełda papierów wartościowych": [
+    {"q":"Czym jest akcja?","o":["Udziałem w własności spółki","Pożyczką dla państwa","Rodzajem waluty"],"a":0,"w":"Akcjonariusz jest współwłaścicielem spółki."},
+    {"q":"Jak nazywa się główna giełda w Polsce?","o":["Giełda w Krakowie","Giełda Papierów Wartościowych w Warszawie","Giełda w Poznaniu"],"a":1,"w":"GPW w Warszawie to główna polska giełda papierów wartościowych."},
+    {"q":"Co oznacza hossa?","o":["Okres spadków cen","Zamknięcie giełdy","Okres wzrostów cen"],"a":2,"w":"Hossa to trwała tendencja wzrostowa na rynku."},
+    {"q":"Co oznacza bessa?","o":["Długi okres spadków cen","Wzrost dywidendy","Wzrost obrotów"],"a":0,"w":"Bessa to trwała tendencja spadkowa na rynku."},
+    {"q":"Czym jest dywidenda?","o":["Podatkiem od giełdy","Częścią zysku spółki wypłacaną akcjonariuszom","Opłatą dla maklera"],"a":1,"w":"Dywidenda to podział zysku między właścicieli akcji."}
+  ],
+  "Bitcoin": [
+    {"q":"Kto jest uznawany za twórcę Bitcoina?","o":["Satoshi Nakamoto (pseudonim)","Elon Musk","Bill Gates"],"a":0,"w":"Tożsamość Satoshiego Nakamoto jest do dziś nieznana."},
+    {"q":"W którym roku powstał Bitcoin?","o":["1999","2009","2019"],"a":1,"w":"Pierwszy blok sieci Bitcoin powstał w styczniu 2009 roku."},
+    {"q":"Na jakiej technologii opiera się Bitcoin?","o":["Wi-Fi","Bluetooth","Blockchain"],"a":2,"w":"Blockchain to rozproszony rejestr transakcji."},
+    {"q":"Ile bitcoinów może powstać maksymalnie?","o":["21 milionów","1 miliard","Nieograniczona liczba"],"a":0,"w":"Protokół ogranicza liczbę bitcoinów do 21 milionów."},
+    {"q":"Jak nazywa się proces weryfikowania transakcji i tworzenia nowych bitcoinów?","o":["Drukowanie","Kopanie (mining)","Emisja przez bank centralny"],"a":1,"w":"Górnicy rozwiązują zadania obliczeniowe i zabezpieczają sieć."}
+  ],
+  "Podatek": [
+    {"q":"Czym jest podatek?","o":["Przymusowym, bezzwrotnym świadczeniem pieniężnym na rzecz państwa","Dobrowolną darowizną","Opłatą za prywatną usługę"],"a":0,"w":"Podatki są obowiązkowe i zasilają budżet państwa."},
+    {"q":"Który podatek płacimy od uzyskanych dochodów?","o":["VAT","PIT","Akcyza"],"a":1,"w":"PIT to podatek dochodowy od osób fizycznych."},
+    {"q":"Co oznacza skrót VAT?","o":["Podatek od wynagrodzeń","Podatek od nieruchomości","Podatek od towarów i usług"],"a":2,"w":"VAT to podatek od towarów i usług, wliczony w cenę w sklepie."},
+    {"q":"Na czym polega podatek progresywny?","o":["Stawka rośnie wraz z dochodem","Stawka jest stała dla wszystkich","Stawka maleje wraz z dochodem"],"a":0,"w":"W podatku progresywnym wyższe dochody są opodatkowane wyższą stawką."},
+    {"q":"Na co państwo przeznacza podatki?","o":["Wyłącznie na wojsko","Na finansowanie usług publicznych, np. szkół, dróg i ochrony zdrowia","Wyłącznie na dopłaty dla firm"],"a":1,"w":"Podatki finansują m.in. edukację, infrastrukturę i służbę zdrowia."}
+  ],
+  "Pieniądz": [
+    {"q":"Jakie funkcje pełni pieniądz?","o":["Tylko funkcję ozdobną","Środka wymiany, miernika wartości i środka tworzenia oszczędności","Wyłącznie środka płatniczego za podatki"],"a":1,"w":"Pieniądz ułatwia handel, pozwala porównywać wartości i odkładać majątek."},
+    {"q":"Jak ludzie handlowali przed wprowadzeniem pieniądza?","o":["Kartami płatniczymi","Bitcoinami","Wymianą towar za towar (barter)"],"a":2,"w":"Barter wymaga, by obie strony chciały akurat to, co oferuje druga."},
+    {"q":"Kto emituje banknoty w Polsce?","o":["Narodowy Bank Polski","Ministerstwo Finansów","Giełda Papierów Wartościowych"],"a":0,"w":"Prawo emisji banknotów i monet ma w Polsce NBP."},
+    {"q":"Gdzie powstały pierwsze monety, około VII wieku p.n.e.?","o":["W Ameryce","W Lidii w Azji Mniejszej","W Australii"],"a":1,"w":"Pierwsze monety bito w królestwie Lidii na terenie dzisiejszej Turcji."},
+    {"q":"Co znaczy, że pieniądz jest środkiem wymiany?","o":["Można go jeść","Można go tylko oszczędzać","Można nim płacić za towary i usługi"],"a":2,"w":"Pieniądz zastępuje wymianę towar za towar."}
+  ]
+}

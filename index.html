@@ -100,6 +100,18 @@ async function api(params) {
   return r.json();
 }
 
+/* ---------- gotowe quizy z pliku quizzes.json ---------- */
+
+let QUIZZES = {};
+fetch('quizzes.json')
+  .then(r => r.ok ? r.json() : {})
+  .then(j => {
+    Object.keys(j).forEach(k => {
+      QUIZZES[k] = j[k].map(x => ({ q: x.q, options: x.o, answer: x.a, why: x.w }));
+    });
+  })
+  .catch(() => {});
+
 /* ---------- postępy (zapis w przeglądarce) ---------- */
 
 const LS_KEY = 'wc_progress_v1';
@@ -132,10 +144,12 @@ function streakInfo() {
   return active ? s.count : 0;
 }
 function renderStats() {
-  const done = Object.keys(loadP().done).length;
+  const keys = Object.keys(loadP().done);
+  const lessons = keys.filter(k => !k.endsWith('#quiz')).length;
+  const quizzes = keys.length - lessons;
   const s = streakInfo();
   statsEl.textContent = (s ? '🔥 Seria: ' + s + ' ' + daysWord(s) + ' · ' : '') +
-    'Ukończone lekcje: ' + done;
+    'Ukończone lekcje: ' + lessons + ' · Quizy: ' + quizzes;
 }
 
 /* ---------- ekrany ---------- */
@@ -164,9 +178,11 @@ function showCategory(cat) {
   out.replaceChildren();
   const back = el('button', '← Wszystkie kategorie', 'ghost');
   back.onclick = showHome;
+  const done = loadP().done;
   const list = el('div', undefined, 'list');
   cat.topics.forEach(([label, wiki]) => {
     const t = el('button', label, 'tile');
+    if (QUIZZES[wiki]) t.append(el('small', '🎯 Quiz dostępny'));
     t.onclick = () => loadArticle(wiki, label, cat);
     list.append(t);
   });
@@ -178,7 +194,7 @@ async function loadArticle(wiki, label, cat) {
   try {
     const d = await api({ action: 'lessons', title: wiki });
     if (d.error) throw new Error(d.error);
-    showLessons({ label, cat, title: d.title, lessons: d.lessons });
+    showLessons({ label, cat, wiki, title: d.title, lessons: d.lessons });
   } catch (e) {
     out.replaceChildren();
     const b = el('button', '← Wróć', 'ghost');
@@ -194,6 +210,16 @@ function showLessons(art) {
   back.onclick = () => art.cat ? showCategory(art.cat) : showHome();
   const done = loadP().done;
   const list = el('div', undefined, 'list');
+
+  const quiz = QUIZZES[art.wiki];
+  if (quiz && quiz.length) {
+    const d = done[art.title + '#quiz'];
+    const t = el('button', '🎯 ' + (d ? '✓ ' : '') + 'Quiz z tematu', 'tile');
+    t.append(el('small', d ? 'Ostatni wynik: ' + d.score + ' / ' + d.total : quiz.length + ' pytań'));
+    t.onclick = () => { showQuiz(art, 'quiz', { quiz }, 0, 0); window.scrollTo(0, 0); };
+    list.append(t);
+  }
+
   art.lessons.forEach((l, i) => {
     const names = l.names.slice(0, 3).join(', ') + (l.names.length > 3 ? '…' : '');
     const d = done[art.title + '#' + i];
@@ -265,8 +291,13 @@ function showQuiz(art, li, data, qi, score) {
   out.replaceChildren();
   const q = data.quiz[qi];
   const last = qi === data.quiz.length - 1;
+
+  const back = el('button', '← Lista lekcji', 'ghost');
+  back.onclick = () => showLessons(art);
+
   const card = el('div', undefined, 'card');
-  card.append(el('p', 'Quiz · pytanie ' + (qi + 1) + ' z ' + data.quiz.length, 'meta'), el('h2', q.q));
+  const heading = li === 'quiz' ? 'Quiz z tematu: ' + art.label : 'Quiz po lekcji';
+  card.append(el('p', heading + ' · pytanie ' + (qi + 1) + ' z ' + data.quiz.length, 'meta'), el('h2', q.q));
 
   const opts = el('div', undefined, 'list');
   const info = el('p', undefined, 'txt');
@@ -294,7 +325,7 @@ function showQuiz(art, li, data, qi, score) {
 
   card.append(opts, info);
   const nav = el('div', undefined, 'nav'); nav.append(next);
-  out.append(card, nav);
+  out.append(back, card, nav);
 }
 
 function finishLesson(art, li, score, total) {
@@ -302,7 +333,7 @@ function finishLesson(art, li, score, total) {
   renderStats();
   out.replaceChildren();
   const card = el('div', undefined, 'card');
-  card.append(el('h2', 'Lekcja ukończona 🎉'));
+  card.append(el('h2', li === 'quiz' ? 'Quiz ukończony 🎉' : 'Lekcja ukończona 🎉'));
   if (total) card.append(el('p', 'Wynik quizu: ' + score + ' / ' + total));
   const s = streakInfo();
   card.append(el('p', '🔥 Seria: ' + s + ' ' + daysWord(s) + ' z rzędu'));
@@ -311,7 +342,7 @@ function finishLesson(art, li, score, total) {
   const list = el('button', 'Lista lekcji');
   list.onclick = () => showLessons(art);
   nav.append(list);
-  if (li < art.lessons.length - 1) {
+  if (typeof li === 'number' && li < art.lessons.length - 1) {
     const n = el('button', 'Następna lekcja →');
     n.onclick = () => openLesson(art, li + 1);
     nav.append(n);
