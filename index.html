@@ -5,12 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wiedza codziennie</title>
 <style>
-  body{font-family:system-ui,sans-serif;max-width:600px;margin:2rem auto;padding:0 1rem;line-height:1.6;background:#f6f7f9;color:#222}
-  h1{font-size:1.5rem}
-  form{display:flex;gap:.5rem;margin-bottom:1rem}
+  body{font-family:system-ui,sans-serif;max-width:640px;margin:2rem auto;padding:0 1rem;line-height:1.6;background:#f6f7f9;color:#222}
+  h1{font-size:1.5rem;margin-bottom:.3rem}
+  h1 a{color:inherit;text-decoration:none}
+  .sub{color:#666;margin-top:0}
+  form{display:flex;gap:.5rem;margin:1rem 0}
   input{flex:1;padding:.6rem;font-size:1rem;border:1px solid #ccc;border-radius:8px}
   button{padding:.6rem 1rem;font-size:1rem;border:0;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}
   button:disabled{background:#a9bde8;cursor:default}
+  button.ghost{background:transparent;color:#2563eb;padding:.4rem 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem}
+  .tile{background:#fff;color:#222;text-align:left;padding:1rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1);font-size:1rem}
+  .tile:hover{box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .list{display:flex;flex-direction:column;gap:.6rem}
   .card{background:#fff;padding:1.2rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
   .card h2{margin-top:0;font-size:1.2rem}
   .card .txt{white-space:pre-line}
@@ -19,55 +26,152 @@
 </style>
 </head>
 <body>
-<h1>Wiedza codziennie</h1>
-<form id="f">
-  <input id="q" value="Sen" placeholder="Temat z Wikipedii">
-  <button>Pokaż</button>
-</form>
+<h1><a href="#" id="home">Wiedza codziennie</a></h1>
+<p class="sub">Wybierz kategorię, potem temat.</p>
 <div id="out"></div>
 
 <script>
+// Katalog: [nazwa dla użytkownika, tytuł artykułu w Wikipedii]
+const CATALOG = [
+  { name: '💻 Informatyka', topics: [
+    ['Jak działa programowanie', 'Programowanie komputerów'],
+    ['Czym jest algorytm', 'Algorytm'],
+    ['Jak działa internet', 'Internet'],
+    ['Czym jest sztuczna inteligencja', 'Sztuczna inteligencja'],
+    ['Jak działa procesor', 'Procesor'],
+  ]},
+  { name: '🔬 Nauka i kosmos', topics: [
+    ['Czemu śnimy', 'Sen'],
+    ['Czarne dziury', 'Czarna dziura'],
+    ['Jak działa DNA', 'Kwas deoksyrybonukleinowy'],
+    ['Ewolucja', 'Ewolucja'],
+    ['Układ Słoneczny', 'Układ Słoneczny'],
+  ]},
+  { name: '🧠 Psychologia', topics: [
+    ['Jak działa pamięć', 'Pamięć'],
+    ['Czym są emocje', 'Emocja'],
+    ['Motywacja', 'Motywacja'],
+    ['Stres', 'Stres'],
+    ['Nawyki', 'Nawyk'],
+  ]},
+  { name: '❤️ Ciało i zdrowie', topics: [
+    ['Mózg człowieka', 'Mózgowie człowieka'],
+    ['Układ odpornościowy', 'Układ odpornościowy'],
+    ['Witaminy', 'Witaminy'],
+    ['Mięśnie', 'Mięsień'],
+    ['Serce', 'Serce'],
+  ]},
+  { name: '🏛️ Historia', topics: [
+    ['II wojna światowa', 'II wojna światowa'],
+    ['Cesarstwo rzymskie', 'Cesarstwo rzymskie'],
+    ['Średniowiecze', 'Średniowiecze'],
+    ['Rewolucja przemysłowa', 'Rewolucja przemysłowa'],
+    ['Zimna wojna', 'Zimna wojna'],
+  ]},
+  { name: '💰 Ekonomia', topics: [
+    ['Inflacja', 'Inflacja'],
+    ['Jak działa giełda', 'Giełda papierów wartościowych'],
+    ['Bitcoin', 'Bitcoin'],
+    ['Podatki', 'Podatek'],
+    ['Czym jest pieniądz', 'Pieniądz'],
+  ]},
+];
+
 const out = document.getElementById('out');
 const skip = ['Przypisy','Bibliografia','Linki zewnętrzne','Zobacz też','Uwagi'];
-let cards = [], i = 0, title = '';
 
-async function load(t) {
+function el(tag, text, cls) {
+  const e = document.createElement(tag);
+  if (text !== undefined) e.textContent = text;
+  if (cls) e.className = cls;
+  return e;
+}
+
+function showHome() {
+  out.replaceChildren();
+  const form = el('form');
+  const input = el('input'); input.placeholder = 'Szukaj własnego tematu...';
+  const btn = el('button', 'Szukaj');
+  form.append(input, btn);
+  form.onsubmit = e => {
+    e.preventDefault();
+    const q = input.value.trim();
+    if (q) loadArticle(q, q, null);
+  };
+  const grid = el('div', undefined, 'grid');
+  CATALOG.forEach(cat => {
+    const t = el('button', cat.name, 'tile');
+    t.onclick = () => showCategory(cat);
+    grid.append(t);
+  });
+  out.append(form, grid);
+}
+
+function showCategory(cat) {
+  out.replaceChildren();
+  const back = el('button', '← Wszystkie kategorie', 'ghost');
+  back.onclick = showHome;
+  const h = el('h2', cat.name);
+  const list = el('div', undefined, 'list');
+  cat.topics.forEach(([label, wiki]) => {
+    const t = el('button', label, 'tile');
+    t.onclick = () => loadArticle(wiki, label, cat);
+    list.append(t);
+  });
+  out.append(back, h, list);
+}
+
+async function loadArticle(wiki, label, cat) {
   out.textContent = 'Ładuję...';
-  const url = 'https://pl.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&format=json&origin=*&titles=' + encodeURIComponent(t);
+  const url = 'https://pl.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&format=json&origin=*&titles=' + encodeURIComponent(wiki);
   try {
     const d = await (await fetch(url)).json();
     const p = Object.values(d.query.pages)[0];
-    if (p.missing !== undefined || !p.extract) { out.textContent = 'Nie znaleziono artykułu.'; return; }
-    title = p.title;
+    if (p.missing !== undefined || !p.extract) {
+      out.textContent = 'Nie znaleziono artykułu.';
+      const b = el('button', '← Wróć', 'ghost');
+      b.onclick = () => cat ? showCategory(cat) : showHome();
+      out.append(el('br'), b);
+      return;
+    }
     const parts = p.extract.split(/\n=+ (.+?) =+\n/);
-    cards = [{ h: 'Wstęp: ' + title, t: parts[0].trim() }];
+    const cards = [{ h: label, t: parts[0].trim() }];
     for (let k = 1; k < parts.length; k += 2) {
       const body = (parts[k + 1] || '').trim();
       if (body && !skip.includes(parts[k])) cards.push({ h: parts[k], t: body });
     }
-    i = 0;
-    show();
+    showCard(cards, 0, p.title, cat);
   } catch (e) {
     out.textContent = 'Błąd pobierania danych.';
   }
 }
 
-function show() {
-  const c = cards[i];
-  out.innerHTML = '<div class="card"><h2></h2><div class="txt"></div></div>' +
-    '<div class="nav"><button id="prev">Wstecz</button><span>' + (i + 1) + ' / ' + cards.length + '</span><button id="next">Dalej</button></div>' +
-    '<p><small>Źródło: <a target="_blank" rel="noopener" href="https://pl.wikipedia.org/wiki/' + encodeURIComponent(title) + '">Wikipedia: ' + title.replace(/</g, '&lt;') + '</a> (CC BY-SA)</small></p>';
-  out.querySelector('h2').textContent = c.h;
-  out.querySelector('.txt').textContent = c.t;
-  const prev = document.getElementById('prev'), next = document.getElementById('next');
-  prev.disabled = i === 0;
-  next.disabled = i === cards.length - 1;
-  prev.onclick = () => { i--; show(); window.scrollTo(0, 0); };
-  next.onclick = () => { i++; show(); window.scrollTo(0, 0); };
+function showCard(cards, i, title, cat) {
+  out.replaceChildren();
+  const back = el('button', cat ? '← ' + cat.name : '← Wszystkie kategorie', 'ghost');
+  back.onclick = () => cat ? showCategory(cat) : showHome();
+
+  const card = el('div', undefined, 'card');
+  card.append(el('h2', cards[i].h), el('div', cards[i].t, 'txt'));
+
+  const nav = el('div', undefined, 'nav');
+  const prev = el('button', 'Wstecz'); prev.disabled = i === 0;
+  const next = el('button', 'Dalej'); next.disabled = i === cards.length - 1;
+  prev.onclick = () => { showCard(cards, i - 1, title, cat); window.scrollTo(0, 0); };
+  next.onclick = () => { showCard(cards, i + 1, title, cat); window.scrollTo(0, 0); };
+  nav.append(prev, el('span', (i + 1) + ' / ' + cards.length), next);
+
+  const src = el('p'); const sm = el('small', 'Źródło: ');
+  const a = el('a', 'Wikipedia: ' + title);
+  a.href = 'https://pl.wikipedia.org/wiki/' + encodeURIComponent(title);
+  a.target = '_blank'; a.rel = 'noopener';
+  sm.append(a, ' (CC BY-SA)'); src.append(sm);
+
+  out.append(back, card, nav, src);
 }
 
-document.getElementById('f').onsubmit = e => { e.preventDefault(); load(document.getElementById('q').value.trim()); };
-load('Sen');
+document.getElementById('home').onclick = e => { e.preventDefault(); showHome(); };
+showHome();
 </script>
 </body>
 </html>
