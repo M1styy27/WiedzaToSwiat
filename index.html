@@ -2,81 +2,170 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f4f6fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
 <title>Wiedza codziennie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  body{font-family:system-ui,sans-serif;max-width:640px;margin:2rem auto;padding:0 1rem;line-height:1.6;background:#f6f7f9;color:#222}
-  h1{font-size:1.5rem;margin-bottom:.3rem}
-  h1 a{color:inherit;text-decoration:none}
-  .sub{color:#666;margin-top:0}
-  form{display:flex;gap:.5rem;margin:1rem 0}
-  input{flex:1;padding:.6rem;font-size:1rem;border:1px solid #ccc;border-radius:8px}
-  button{padding:.6rem 1rem;font-size:1rem;border:0;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}
-  button:disabled{background:#a9bde8;cursor:default}
-  button.ghost{background:transparent;color:#2563eb;padding:.4rem 0}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem}
-  .tile{background:#fff;color:#222;text-align:left;padding:1rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1);font-size:1rem}
-  .tile:hover{box-shadow:0 2px 8px rgba(0,0,0,.18)}
-  .tile small{display:block;color:#666;margin-top:.2rem}
-  .list{display:flex;flex-direction:column;gap:.6rem}
-  .card{background:#fff;padding:1.2rem;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-  .card h2{margin-top:0;font-size:1.2rem}
-  .txt{white-space:pre-line}
-  .bar{height:6px;background:#dde3ee;border-radius:3px;margin-bottom:1rem;overflow:hidden}
-  .bar div{height:100%;background:#2563eb}
-  .meta{color:#666;font-size:.9rem;margin:.3rem 0}
-  .note{color:#666;font-size:.85rem}
-  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;gap:.5rem}
-  .opt:disabled{background:#fff;color:#222;cursor:default}
-  .opt.ok{background:#d1fae5}
-  .opt.bad{background:#fee2e2}
-  small a{color:#555}
+  :root{
+    --bg:#f4f6fa; --surface:#ffffff; --ink:#0f172a; --muted:#5b6578; --line:#dde3ee;
+    --accent:#4f46e5; --accent-ink:var(--accent);
+    --tint:color-mix(in srgb, var(--accent) 10%, var(--surface));
+    --ok:#047857; --ok-bg:#d9f5e8; --bad:#b91c1c; --bad-bg:#fde4e4;
+    --head:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --read:"Source Serif 4", Georgia, "Times New Roman", serif;
+    --ui:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0d1117; --surface:#161b22; --ink:#e6edf3; --muted:#9aa7b8; --line:#2a3340;
+      --accent-ink:color-mix(in srgb, var(--accent) 55%, white);
+      --ok:#6ee7b7; --ok-bg:#0f3a2b; --bad:#fca5a5; --bad-bg:#3d1717;
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.5 var(--ui);-webkit-tap-highlight-color:transparent}
+  body.has-dock{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;min-height:48px;padding:0}
+  button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+  .top{position:sticky;top:0;z-index:5;background:color-mix(in srgb, var(--bg) 92%, transparent);
+       -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+       padding-top:env(safe-area-inset-top)}
+  .top .in{max-width:680px;margin:0 auto;padding:.65rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .brand{font-family:var(--head);font-weight:800;font-size:1.2rem;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+  .streak{font-weight:650;font-size:.95rem;color:var(--accent-ink);white-space:nowrap}
+
+  .wrap{max-width:680px;margin:0 auto;padding:1rem 1rem 2.5rem}
+  .big{font-family:var(--head);font-weight:800;font-size:clamp(1.7rem,7vw,2.3rem);line-height:1.1;letter-spacing:-.015em;margin:.6rem 0 .5rem}
+  .meta{color:var(--muted);font-size:.92rem;margin:0}
+  .note{color:var(--muted);font-size:.85rem}
+  .link{color:var(--accent-ink);font-weight:600;min-height:44px;padding:.4rem 0;text-align:left}
+  small a{color:var(--muted)}
+
+  .btn{padding:.8rem 1.2rem;border-radius:14px;font-weight:650;background:var(--accent);color:#fff}
+  .btn.sec{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  .btn:disabled{opacity:.45;cursor:default}
+
+  .search{display:flex;gap:.5rem;margin:1.1rem 0 1.4rem}
+  .search input{flex:1;min-width:0;height:52px;padding:0 1rem;font:inherit;font-size:1rem;color:var(--ink);
+                border:1.5px solid var(--line);border-radius:14px;background:var(--surface)}
+  .search .btn{height:52px}
+
+  .cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+  @media (min-width:560px){.cats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .cat{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;
+       min-height:124px;padding:1rem;border-radius:20px;background:var(--c);color:#fff}
+  .cat .emo{font-size:1.9rem;line-height:1}
+  .cat .nm{font-family:var(--head);font-weight:800;font-size:1.15rem;line-height:1.15;margin-top:1rem;overflow-wrap:anywhere}
+  .cat .ct{font-size:.85rem;opacity:.92}
+
+  .rows{border:1.5px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden;margin-top:1rem}
+  .row{display:flex;align-items:center;gap:.8rem;width:100%;text-align:left;padding:.8rem 1rem;min-height:62px;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .row::after{content:"\203A";color:var(--muted);font-size:1.5rem;line-height:1}
+  .row .main{flex:1;min-width:0}
+  .row .t{font-weight:650;overflow-wrap:anywhere}
+  .row .s{font-size:.85rem;color:var(--muted)}
+  .row.quiz{background:var(--tint)}
+  .row:active{background:var(--tint)}
+  @media (hover:hover){.row:hover{background:var(--tint)}.cat:hover{filter:brightness(1.07)}}
+  .badge{display:inline-block;font-size:.78rem;font-weight:650;color:var(--accent-ink);background:var(--tint);padding:.05rem .55rem;border-radius:999px;margin-top:.15rem}
+  .num{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:750;background:var(--tint);color:var(--accent-ink)}
+  .num.done{background:var(--accent);color:#fff}
+
+  .crumb{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+  .segs{display:flex;gap:3px;margin:.4rem 0 1.4rem}
+  .segs i{flex:1;height:5px;border-radius:3px;background:var(--line);transition:background .2s}
+  .segs i.on{background:var(--accent)}
+  .slide h2{font-family:var(--head);font-weight:800;font-size:clamp(1.5rem,6.2vw,2rem);line-height:1.15;letter-spacing:-.01em;margin:0 0 1rem;overflow-wrap:anywhere}
+  .slide p{font-family:var(--read);font-size:clamp(1.08rem,4.2vw,1.2rem);line-height:1.7;margin:0 0 1rem;max-width:60ch;overflow-wrap:anywhere}
+
+  .q{font-family:var(--head);font-weight:800;font-size:clamp(1.3rem,5.4vw,1.7rem);line-height:1.2;margin:.2rem 0 1.2rem;overflow-wrap:anywhere}
+  .opts{display:flex;flex-direction:column;gap:.6rem}
+  .opt{display:flex;align-items:center;gap:.8rem;text-align:left;width:100%;padding:.75rem 1rem;min-height:58px;
+       border:1.5px solid var(--line);border-radius:16px;background:var(--surface);font-weight:550}
+  .opt .k{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:750;background:var(--tint);color:var(--accent-ink)}
+  .opt .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+  .opt .mk{flex:none;font-weight:800}
+  .opt:disabled{cursor:default;color:var(--ink)}
+  .opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+  .opt.ok .mk{color:var(--ok)}
+  .opt.bad{border-color:var(--bad);background:var(--bad-bg)}
+  .opt.bad .mk{color:var(--bad)}
+  .fb{margin-top:1rem;padding:.9rem 1rem;border-radius:14px;background:var(--tint)}
+  .fb b{display:block}
+
+  .result{padding-top:1rem}
+  .score{font-family:var(--head);font-weight:800;font-size:3.2rem;line-height:1;color:var(--accent-ink);margin:.4rem 0}
+
+  .wait{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1rem;padding:3rem 1rem;color:var(--muted)}
+  .spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}*{transition:none!important}}
+
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);
+        padding:.7rem 1rem calc(.7rem + env(safe-area-inset-bottom))}
+  .dock[hidden]{display:none}
+  .dock .in{max-width:680px;margin:0 auto;display:flex;gap:.6rem}
+  .dock .btn{flex:1;min-height:52px}
+  .dock .btn.sec{flex:0 0 auto;min-width:104px}
 </style>
 </head>
 <body>
-<h1><a href="#" id="home">Wiedza codziennie</a></h1>
-<p class="sub" id="stats"></p>
-<div id="out"></div>
+<header class="top"><div class="in">
+  <a class="brand" href="#" id="home">Wiedza codziennie</a>
+  <span class="streak" id="streak"></span>
+</div></header>
+<main class="wrap" id="out"></main>
+<div class="dock" id="dock" hidden></div>
 
 <script>
+const DEFAULT_ACCENT = '#4f46e5';
+
 // Katalog: [nazwa dla użytkownika, tytuł artykułu w Wikipedii]
 const CATALOG = [
-  { name: '💻 Informatyka', topics: [
+  { icon: '💻', name: 'Informatyka', color: '#2563eb', topics: [
     ['Jak działa programowanie', 'Programowanie komputerów'],
     ['Czym jest algorytm', 'Algorytm'],
     ['Jak działa internet', 'Internet'],
     ['Czym jest sztuczna inteligencja', 'Sztuczna inteligencja'],
     ['Jak działa procesor', 'Procesor'],
   ]},
-  { name: '🔬 Nauka i kosmos', topics: [
+  { icon: '🔬', name: 'Nauka i kosmos', color: '#7c3aed', topics: [
     ['Czemu śnimy', 'Sen'],
     ['Czarne dziury', 'Czarna dziura'],
     ['Jak działa DNA', 'Kwas deoksyrybonukleinowy'],
     ['Ewolucja', 'Ewolucja'],
     ['Układ Słoneczny', 'Układ Słoneczny'],
   ]},
-  { name: '🧠 Psychologia', topics: [
+  { icon: '🧠', name: 'Psychologia', color: '#db2777', topics: [
     ['Jak działa pamięć', 'Pamięć'],
     ['Czym są emocje', 'Emocja'],
     ['Motywacja', 'Motywacja'],
     ['Stres', 'Stres'],
     ['Nawyki', 'Nawyk'],
   ]},
-  { name: '❤️ Ciało i zdrowie', topics: [
+  { icon: '❤️', name: 'Ciało i zdrowie', color: '#e11d48', topics: [
     ['Mózg człowieka', 'Mózgowie człowieka'],
     ['Układ odpornościowy', 'Układ odpornościowy'],
     ['Witaminy', 'Witaminy'],
     ['Mięśnie', 'Mięsień'],
     ['Serce', 'Serce'],
   ]},
-  { name: '🏛️ Historia', topics: [
+  { icon: '🏛️', name: 'Historia', color: '#b45309', topics: [
     ['II wojna światowa', 'II wojna światowa'],
     ['Cesarstwo rzymskie', 'Cesarstwo rzymskie'],
     ['Średniowiecze', 'Średniowiecze'],
     ['Rewolucja przemysłowa', 'Rewolucja przemysłowa'],
     ['Zimna wojna', 'Zimna wojna'],
   ]},
-  { name: '💰 Ekonomia', topics: [
+  { icon: '💰', name: 'Ekonomia', color: '#047857', topics: [
     ['Inflacja', 'Inflacja'],
     ['Jak działa giełda', 'Giełda papierów wartościowych'],
     ['Bitcoin', 'Bitcoin'],
@@ -86,7 +175,8 @@ const CATALOG = [
 ];
 
 const out = document.getElementById('out');
-const statsEl = document.getElementById('stats');
+const dock = document.getElementById('dock');
+const streakEl = document.getElementById('streak');
 
 function el(tag, text, cls) {
   const e = document.createElement(tag);
@@ -98,6 +188,59 @@ function el(tag, text, cls) {
 async function api(params) {
   const r = await fetch('/api?' + new URLSearchParams(params));
   return r.json();
+}
+
+/* ---------- pomocniki interfejsu ---------- */
+
+function setAccent(c) {
+  document.documentElement.style.setProperty('--accent', c || DEFAULT_ACCENT);
+}
+
+function setDock(items) {
+  dock.replaceChildren();
+  if (!items) {
+    dock.hidden = true;
+    document.body.classList.remove('has-dock');
+    return [];
+  }
+  const inner = el('div', undefined, 'in');
+  const buttons = items.map(it => {
+    const b = el('button', it.text, 'btn' + (it.sec ? ' sec' : ''));
+    b.disabled = !!it.disabled;
+    if (it.onClick) b.onclick = it.onClick;
+    inner.append(b);
+    return b;
+  });
+  dock.append(inner);
+  dock.hidden = false;
+  document.body.classList.add('has-dock');
+  return buttons;
+}
+
+function reset() {
+  out.replaceChildren();
+  setDock(null);
+  window.scrollTo(0, 0);
+}
+
+function linkBtn(text, onClick) {
+  const b = el('button', text, 'link');
+  b.onclick = onClick;
+  return b;
+}
+
+function waitScreen(text) {
+  reset();
+  const w = el('div', undefined, 'wait');
+  w.setAttribute('role', 'status');
+  w.append(el('div', undefined, 'spin'), el('div', text));
+  out.append(w);
+}
+
+function segments(total, current) {
+  const s = el('div', undefined, 'segs');
+  for (let i = 0; i < total; i++) s.append(el('i', undefined, i <= current ? 'on' : ''));
+  return s;
 }
 
 /* ---------- gotowe quizy z pliku quizzes.json ---------- */
@@ -140,34 +283,45 @@ function markDone(title, n, score, total) {
 }
 function streakInfo() {
   const s = loadP().streak;
-  const active = s.last === today() || s.last === yesterday();
-  return active ? s.count : 0;
+  return (s.last === today() || s.last === yesterday()) ? s.count : 0;
 }
 function renderStats() {
-  const keys = Object.keys(loadP().done);
-  const lessons = keys.filter(k => !k.endsWith('#quiz')).length;
-  const quizzes = keys.length - lessons;
   const s = streakInfo();
-  statsEl.textContent = (s ? '🔥 Seria: ' + s + ' ' + daysWord(s) + ' · ' : '') +
-    'Ukończone lekcje: ' + lessons + ' · Quizy: ' + quizzes;
+  streakEl.textContent = s ? '🔥 ' + s + ' ' + daysWord(s) : '';
 }
 
 /* ---------- ekrany ---------- */
 
 function showHome() {
-  renderStats();
-  out.replaceChildren();
-  const form = el('form');
-  const input = el('input'); input.placeholder = 'Szukaj własnego tematu...';
-  form.append(input, el('button', 'Szukaj'));
+  reset(); setAccent(); renderStats();
+  const keys = Object.keys(loadP().done);
+  const lessons = keys.filter(k => !k.endsWith('#quiz')).length;
+  const quizzes = keys.length - lessons;
+
+  out.append(
+    el('h1', 'Czego chcesz się dziś nauczyć?', 'big'),
+    el('p', lessons || quizzes
+      ? 'Ukończone lekcje: ' + lessons + ', quizy: ' + quizzes + '.'
+      : 'Wybierz kategorię albo wyszukaj własny temat.', 'meta')
+  );
+
+  const form = el('form', undefined, 'search');
+  const input = el('input');
+  input.type = 'search'; input.placeholder = 'Własny temat z Wikipedii';
+  input.setAttribute('aria-label', 'Własny temat z Wikipedii');
+  input.enterKeyHint = 'search';
+  form.append(input, el('button', 'Szukaj', 'btn'));
   form.onsubmit = e => {
     e.preventDefault();
     const q = input.value.trim();
     if (q) loadArticle(q, q, null);
   };
-  const grid = el('div', undefined, 'grid');
+
+  const grid = el('div', undefined, 'cats');
   CATALOG.forEach(cat => {
-    const t = el('button', cat.name, 'tile');
+    const t = el('button', undefined, 'cat');
+    t.style.setProperty('--c', cat.color);
+    t.append(el('span', cat.icon, 'emo'), el('span', cat.name, 'nm'), el('span', cat.topics.length + ' tematów', 'ct'));
     t.onclick = () => showCategory(cat);
     grid.append(t);
   });
@@ -175,188 +329,201 @@ function showHome() {
 }
 
 function showCategory(cat) {
-  out.replaceChildren();
-  const back = el('button', '← Wszystkie kategorie', 'ghost');
-  back.onclick = showHome;
-  const done = loadP().done;
-  const list = el('div', undefined, 'list');
+  reset(); setAccent(cat.color); renderStats();
+  const list = el('div', undefined, 'rows');
   cat.topics.forEach(([label, wiki]) => {
-    const t = el('button', label, 'tile');
-    if (QUIZZES[wiki]) t.append(el('small', '🎯 Quiz dostępny'));
-    t.onclick = () => loadArticle(wiki, label, cat);
-    list.append(t);
+    const row = el('button', undefined, 'row');
+    const main = el('div', undefined, 'main');
+    main.append(el('div', label, 't'));
+    if (QUIZZES[wiki]) main.append(el('span', 'Quiz dostępny', 'badge'));
+    row.append(main);
+    row.onclick = () => loadArticle(wiki, label, cat);
+    list.append(row);
   });
-  out.append(back, el('h2', cat.name), list);
+  out.append(linkBtn('‹ Wszystkie kategorie', showHome),
+    el('h1', cat.icon + ' ' + cat.name, 'big'), list);
 }
 
 async function loadArticle(wiki, label, cat) {
-  out.textContent = 'Ładuję...';
+  setAccent(cat ? cat.color : null);
+  waitScreen('Ładuję temat...');
   try {
     const d = await api({ action: 'lessons', title: wiki });
     if (d.error) throw new Error(d.error);
     showLessons({ label, cat, wiki, title: d.title, lessons: d.lessons });
   } catch (e) {
-    out.replaceChildren();
-    const b = el('button', '← Wróć', 'ghost');
-    b.onclick = () => cat ? showCategory(cat) : showHome();
-    out.append(el('p', 'Nie znaleziono artykułu lub wystąpił błąd.'), b);
+    reset();
+    out.append(
+      linkBtn(cat ? '‹ ' + cat.name : '‹ Wszystkie kategorie', () => cat ? showCategory(cat) : showHome()),
+      el('h1', 'Nie udało się otworzyć tematu', 'big'),
+      el('p', 'Nie znaleziono takiego artykułu w Wikipedii albo wystąpił błąd połączenia. Spróbuj innej nazwy lub spróbuj ponownie.', 'meta')
+    );
   }
 }
 
 function showLessons(art) {
-  renderStats();
-  out.replaceChildren();
-  const back = el('button', art.cat ? '← ' + art.cat.name : '← Wszystkie kategorie', 'ghost');
-  back.onclick = () => art.cat ? showCategory(art.cat) : showHome();
+  reset(); setAccent(art.cat ? art.cat.color : null); renderStats();
   const done = loadP().done;
-  const list = el('div', undefined, 'list');
+  const list = el('div', undefined, 'rows');
 
   const quiz = QUIZZES[art.wiki];
   if (quiz && quiz.length) {
     const d = done[art.title + '#quiz'];
-    const t = el('button', '🎯 ' + (d ? '✓ ' : '') + 'Quiz z tematu', 'tile');
-    t.append(el('small', d ? 'Ostatni wynik: ' + d.score + ' / ' + d.total : quiz.length + ' pytań'));
-    t.onclick = () => { showQuiz(art, 'quiz', { quiz }, 0, 0); window.scrollTo(0, 0); };
-    list.append(t);
+    const row = el('button', undefined, 'row quiz');
+    const main = el('div', undefined, 'main');
+    main.append(el('div', 'Quiz z tematu', 't'),
+      el('div', d ? 'Ostatni wynik: ' + d.score + ' z ' + d.total : quiz.length + ' pytań', 's'));
+    row.append(el('span', d ? '✓' : '🎯', 'num' + (d ? ' done' : '')), main);
+    row.onclick = () => showQuiz(art, 'quiz', { quiz }, 0, 0);
+    list.append(row);
   }
 
   art.lessons.forEach((l, i) => {
     const names = l.names.slice(0, 3).join(', ') + (l.names.length > 3 ? '…' : '');
     const d = done[art.title + '#' + i];
-    const t = el('button', (d ? '✓ ' : '') + 'Lekcja ' + (i + 1) + ': ' + names, 'tile');
-    if (d && d.total) t.append(el('small', 'Quiz: ' + d.score + ' / ' + d.total));
-    t.onclick = () => openLesson(art, i);
-    list.append(t);
+    const row = el('button', undefined, 'row');
+    const main = el('div', undefined, 'main');
+    main.append(el('div', names, 't'));
+    if (d) main.append(el('div', 'Ukończona' + (d.total ? ', quiz: ' + d.score + ' z ' + d.total : ''), 's'));
+    row.append(el('span', d ? '✓' : String(i + 1), 'num' + (d ? ' done' : '')), main);
+    row.onclick = () => openLesson(art, i);
+    list.append(row);
   });
-  out.append(back, el('h2', art.label),
-    el('p', 'Lekcji: ' + art.lessons.length + ' (maks. 10 slajdów każda)', 'meta'),
-    list, sourceLine(art));
+
+  const src = el('p', undefined, 'note');
+  src.append(sourceLine(art));
+  out.append(
+    linkBtn(art.cat ? '‹ ' + art.cat.name : '‹ Wszystkie kategorie', () => art.cat ? showCategory(art.cat) : showHome()),
+    el('h1', art.label, 'big'),
+    el('p', 'Lekcji: ' + art.lessons.length + ', każda ma maksymalnie 10 slajdów.', 'meta'),
+    list, src
+  );
 }
 
 async function openLesson(art, li) {
-  out.replaceChildren();
-  out.append(el('p', 'Przygotowuję lekcję... Za pierwszym razem może to potrwać kilkanaście sekund. Potem lekcja jest zapisana i otwiera się od razu.'));
+  waitScreen('Przygotowuję lekcję. Za pierwszym razem może to potrwać kilkanaście sekund, potem jest zapisana i otwiera się od razu.');
   try {
     const data = await api({ action: 'lesson', title: art.title, n: li });
     if (data.error) throw new Error(data.error);
-    window.scrollTo(0, 0);
     showSlide(art, li, data, 0);
   } catch (e) {
-    out.replaceChildren();
-    const b = el('button', '← Lista lekcji', 'ghost');
-    b.onclick = () => showLessons(art);
-    out.append(el('p', 'Nie udało się pobrać lekcji. Spróbuj ponownie za chwilę.'), b);
+    reset();
+    out.append(
+      linkBtn('‹ Lista lekcji', () => showLessons(art)),
+      el('h1', 'Nie udało się pobrać lekcji', 'big'),
+      el('p', 'Spróbuj ponownie za chwilę. Jeśli problem wraca, sprawdź w Netlify, czy funkcja api została wdrożona.', 'meta')
+    );
   }
 }
 
 function showSlide(art, li, data, si) {
-  out.replaceChildren();
+  reset(); setAccent(art.cat ? art.cat.color : null);
   const total = data.slides.length;
-  const back = el('button', '← Lista lekcji', 'ghost');
-  back.onclick = () => showLessons(art);
+  const slide = data.slides[si];
 
-  const bar = el('div', undefined, 'bar');
-  const fill = el('div'); fill.style.width = ((si + 1) / total * 100) + '%';
-  bar.append(fill);
+  const crumb = el('div', undefined, 'crumb');
+  crumb.append(linkBtn('‹ Lekcje', () => showLessons(art)),
+    el('span', 'Lekcja ' + (li + 1) + ' z ' + art.lessons.length + ', slajd ' + (si + 1) + ' z ' + total, 'meta'));
 
-  const card = el('div', undefined, 'card');
-  card.append(el('h2', data.slides[si].h), el('div', data.slides[si].t, 'txt'));
-
-  const nav = el('div', undefined, 'nav');
-  const prev = el('button', 'Wstecz'); prev.disabled = si === 0;
-  prev.onclick = () => { showSlide(art, li, data, si - 1); window.scrollTo(0, 0); };
-  let nextLabel = 'Dalej', nextAction = () => showSlide(art, li, data, si + 1);
-  if (si === total - 1) {
-    if (data.quiz && data.quiz.length) {
-      nextLabel = 'Quiz →';
-      nextAction = () => showQuiz(art, li, data, 0, 0);
-    } else {
-      nextLabel = 'Zakończ ✓';
-      nextAction = () => finishLesson(art, li, 0, 0);
-    }
-  }
-  const next = el('button', nextLabel);
-  next.onclick = () => { nextAction(); window.scrollTo(0, 0); };
-  nav.append(prev, el('span', (si + 1) + ' / ' + total), next);
+  const box = el('article', undefined, 'slide');
+  box.append(el('h2', slide.h));
+  String(slide.t).split(/\n{2,}/).forEach(par => box.append(el('p', par.trim())));
 
   const note = el('p', data.source === 'wikipedia'
     ? 'Wersja podstawowa: surowy tekst z Wikipedii (lekcja AI chwilowo niedostępna).'
     : 'Lekcja przygotowana przez AI na podstawie Wikipedii. W razie wątpliwości sprawdź oryginał.', 'note');
+  const src = el('p', undefined, 'note'); src.append(sourceLine(art));
 
-  out.append(back, el('p', art.label + ' · Lekcja ' + (li + 1) + ' z ' + art.lessons.length, 'meta'),
-    bar, card, nav, note, sourceLine(art));
+  out.append(crumb, segments(total, si), box, note, src);
+
+  const last = si === total - 1;
+  let nextText = 'Dalej', nextAction = () => showSlide(art, li, data, si + 1);
+  if (last) {
+    if (data.quiz && data.quiz.length) {
+      nextText = 'Przejdź do quizu';
+      nextAction = () => showQuiz(art, li, data, 0, 0);
+    } else {
+      nextText = 'Zakończ lekcję';
+      nextAction = () => finishLesson(art, li, 0, 0);
+    }
+  }
+  setDock([
+    { text: 'Wstecz', sec: true, disabled: si === 0, onClick: () => showSlide(art, li, data, si - 1) },
+    { text: nextText, onClick: nextAction },
+  ]);
 }
 
 function showQuiz(art, li, data, qi, score) {
-  out.replaceChildren();
+  reset(); setAccent(art.cat ? art.cat.color : null);
   const q = data.quiz[qi];
-  const last = qi === data.quiz.length - 1;
+  const n = data.quiz.length;
+  const last = qi === n - 1;
 
-  const back = el('button', '← Lista lekcji', 'ghost');
-  back.onclick = () => showLessons(art);
+  const crumb = el('div', undefined, 'crumb');
+  crumb.append(linkBtn('‹ Lekcje', () => showLessons(art)),
+    el('span', (li === 'quiz' ? 'Quiz z tematu' : 'Quiz po lekcji') + ', pytanie ' + (qi + 1) + ' z ' + n, 'meta'));
 
-  const card = el('div', undefined, 'card');
-  const heading = li === 'quiz' ? 'Quiz z tematu: ' + art.label : 'Quiz po lekcji';
-  card.append(el('p', heading + ' · pytanie ' + (qi + 1) + ' z ' + data.quiz.length, 'meta'), el('h2', q.q));
+  const opts = el('div', undefined, 'opts');
+  const fb = el('div', undefined, 'fb');
+  fb.hidden = true;
+  fb.setAttribute('role', 'status');
 
-  const opts = el('div', undefined, 'list');
-  const info = el('p', undefined, 'txt');
-  const next = el('button', last ? 'Zobacz wynik' : 'Dalej');
-  next.style.display = 'none';
+  const [nextBtn] = setDock([{ text: 'Wybierz odpowiedź', disabled: true }]);
 
   const btns = q.options.map((o, idx) => {
-    const b = el('button', o, 'tile opt');
+    const b = el('button', undefined, 'opt');
+    const mk = el('span', '', 'mk');
+    b.append(el('span', String.fromCharCode(65 + idx), 'k'), el('span', o, 'tx'), mk);
     b.onclick = () => {
       const good = idx === q.answer;
-      btns.forEach((x, j) => { x.disabled = true; if (j === q.answer) x.classList.add('ok'); });
-      if (!good) b.classList.add('bad');
-      info.textContent = (good ? 'Dobrze! ' : 'Nie tym razem. ') + (q.why || '');
+      btns.forEach((x, j) => {
+        x.b.disabled = true;
+        if (j === q.answer) { x.b.classList.add('ok'); x.mk.textContent = '✓'; }
+      });
+      if (!good) { b.classList.add('bad'); mk.textContent = '✕'; }
+      fb.replaceChildren(el('b', good ? 'Dobrze!' : 'Nie tym razem.'));
+      if (q.why) fb.append(el('span', q.why));
+      fb.hidden = false;
       const sc = score + (good ? 1 : 0);
-      next.style.display = '';
-      next.onclick = () => {
-        if (last) finishLesson(art, li, sc, data.quiz.length);
-        else showQuiz(art, li, data, qi + 1, sc);
-        window.scrollTo(0, 0);
-      };
+      nextBtn.disabled = false;
+      nextBtn.textContent = last ? 'Zobacz wynik' : 'Następne pytanie';
+      nextBtn.onclick = () => last
+        ? finishLesson(art, li, sc, n)
+        : showQuiz(art, li, data, qi + 1, sc);
     };
     opts.append(b);
-    return b;
+    return { b, mk };
   });
 
-  card.append(opts, info);
-  const nav = el('div', undefined, 'nav'); nav.append(next);
-  out.append(back, card, nav);
+  out.append(crumb, segments(n, qi), el('h2', q.q, 'q'), opts, fb);
 }
 
 function finishLesson(art, li, score, total) {
   markDone(art.title, li, score, total);
-  renderStats();
-  out.replaceChildren();
-  const card = el('div', undefined, 'card');
-  card.append(el('h2', li === 'quiz' ? 'Quiz ukończony 🎉' : 'Lekcja ukończona 🎉'));
-  if (total) card.append(el('p', 'Wynik quizu: ' + score + ' / ' + total));
+  reset(); setAccent(art.cat ? art.cat.color : null); renderStats();
   const s = streakInfo();
-  card.append(el('p', '🔥 Seria: ' + s + ' ' + daysWord(s) + ' z rzędu'));
-
-  const nav = el('div', undefined, 'nav');
-  const list = el('button', 'Lista lekcji');
-  list.onclick = () => showLessons(art);
-  nav.append(list);
-  if (typeof li === 'number' && li < art.lessons.length - 1) {
-    const n = el('button', 'Następna lekcja →');
-    n.onclick = () => openLesson(art, li + 1);
-    nav.append(n);
+  const box = el('div', undefined, 'result');
+  box.append(el('h1', li === 'quiz' ? 'Quiz ukończony' : 'Lekcja ukończona', 'big'));
+  if (total) {
+    box.append(el('div', score + ' z ' + total, 'score'), el('p', 'poprawnych odpowiedzi', 'meta'));
   }
-  out.append(card, nav);
+  box.append(el('p', '🔥 Seria: ' + s + ' ' + daysWord(s) + ' z rzędu'));
+  out.append(box);
+
+  const items = [{ text: 'Lista lekcji', sec: typeof li === 'number' && li < art.lessons.length - 1, onClick: () => showLessons(art) }];
+  if (typeof li === 'number' && li < art.lessons.length - 1) {
+    items.push({ text: 'Następna lekcja', onClick: () => openLesson(art, li + 1) });
+  }
+  setDock(items);
 }
 
 function sourceLine(art) {
-  const p = el('p'); const sm = el('small', 'Źródło: ');
+  const sm = el('small', 'Źródło: ');
   const a = el('a', 'Wikipedia: ' + art.title);
   a.href = 'https://pl.wikipedia.org/wiki/' + encodeURIComponent(art.title);
   a.target = '_blank'; a.rel = 'noopener';
-  sm.append(a, ' (CC BY-SA)'); p.append(sm);
-  return p;
+  sm.append(a, ' (CC BY-SA)');
+  return sm;
 }
 
 document.getElementById('home').onclick = e => { e.preventDefault(); showHome(); };
