@@ -115,12 +115,42 @@
   .dock .in{max-width:680px;margin:0 auto;display:flex;gap:.6rem}
   .dock .btn{flex:1;min-height:52px}
   .dock .btn.sec{flex:0 0 auto;min-width:104px}
+
+  .hdr-r{display:flex;align-items:center;gap:.8rem}
+  .acct{min-height:44px;display:inline-flex;align-items:center}
+  .acct.guest{padding:0 .9rem;border:1.5px solid var(--line);border-radius:999px;font-weight:650;font-size:.92rem}
+  .avatar{display:inline-grid;place-items:center;border-radius:50%;flex:none;line-height:1;color:#fff}
+  .tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:var(--line);margin:1rem 0 1.2rem}
+  .tabs button{min-height:44px;border-radius:11px;font-weight:650;color:var(--muted)}
+  .tabs button.on{background:var(--surface);color:var(--ink)}
+  .field{display:block;margin-bottom:1rem}
+  .field > span{display:block;font-weight:650;font-size:.92rem;margin-bottom:.35rem}
+  .inp{display:flex;gap:.4rem;align-items:center}
+  .inp input{flex:1;min-width:0;height:52px;padding:0 1rem;font:inherit;font-size:1rem;color:var(--ink);
+             border:1.5px solid var(--line);border-radius:14px;background:var(--surface)}
+  .inp button{flex:none;padding:0 .8rem;color:var(--accent-ink);font-weight:650}
+  .hint{color:var(--muted);font-size:.88rem;margin:.2rem 0 1rem}
+  .err{color:var(--bad);font-weight:600;margin:.2rem 0 1rem}
+  .err[hidden],.fb[hidden]{display:none}
+  .submit{width:100%;min-height:54px}
+  .picker{margin:.4rem 0 1.2rem}
+  .picker .prev{display:flex;justify-content:center;margin-bottom:1rem}
+  .picker .meta{margin:.5rem 0}
+  .emojis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.4rem;margin-bottom:.8rem}
+  .emojis button{min-height:48px;font-size:1.5rem;border-radius:12px;border:1.5px solid var(--line);background:var(--surface)}
+  .emojis button.on{border-color:var(--accent);background:var(--tint)}
+  .swatches{display:flex;flex-wrap:wrap;gap:.6rem}
+  .swatches button{width:44px;height:44px;min-height:44px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1.5px var(--line)}
+  .swatches button.on{box-shadow:0 0 0 3px var(--accent)}
+  .profile{display:flex;align-items:center;gap:1rem;margin:.8rem 0 1.4rem}
+  .profile .big{margin:0}
+  .stack{display:flex;flex-direction:column;gap:.7rem;margin-top:1rem}
 </style>
 </head>
 <body>
 <header class="top"><div class="in">
   <a class="brand" href="#" id="home">Wiedza codziennie</a>
-  <span class="streak" id="streak"></span>
+  <div class="hdr-r"><span class="streak" id="streak"></span><button class="acct" id="acct" type="button"></button></div>
 </div></header>
 <main class="wrap" id="out"></main>
 <div class="dock" id="dock" hidden></div>
@@ -217,7 +247,9 @@ function setDock(items) {
   return buttons;
 }
 
+let atHome = false;
 function reset() {
+  atHome = false;
   out.replaceChildren();
   setDock(null);
   window.scrollTo(0, 0);
@@ -262,15 +294,50 @@ const today = () => new Date().toLocaleDateString('sv-SE');
 const yesterday = () => new Date(Date.now() - 864e5).toLocaleDateString('sv-SE');
 const daysWord = n => n === 1 ? 'dzień' : 'dni';
 
-function loadP() {
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+let TOKEN = lsGet('wc_token');
+let USER = (() => { try { return JSON.parse(lsGet('wc_user')); } catch (e) { return null; } })();
+if (!TOKEN) USER = null;
+
+// bez konta: jeden klucz, po zalogowaniu: osobny klucz dla każdego konta
+const progKey = () => USER ? LS_KEY + '_' + USER.id : LS_KEY;
+const emptyP = () => ({ done: {}, streak: { last: '', count: 0 } });
+const normP = p => (p && p.done && p.streak) ? p : emptyP();
+
+function readP(key) {
   try {
-    const p = JSON.parse(localStorage.getItem(LS_KEY));
+    const p = JSON.parse(localStorage.getItem(key));
     if (p && p.done && p.streak) return p;
   } catch (e) {}
-  return { done: {}, streak: { last: '', count: 0 } };
+  return null;
 }
+function loadP() { return readP(progKey()) || emptyP(); }
 function saveP(p) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(p)); } catch (e) {}
+  lsSet(progKey(), JSON.stringify(p));
+  scheduleSync();
+}
+
+function mergeP(a, b) {
+  const done = Object.assign({}, a.done);
+  Object.keys(b.done).forEach(k => {
+    const v = b.done[k], c = done[k];
+    const vs = v.score || 0, cs = c ? (c.score || 0) : -1;
+    if (!c || vs > cs || (vs === cs && (v.at || '') > (c.at || ''))) done[k] = v;
+  });
+  let s = a.streak;
+  const t = b.streak;
+  if ((t.last || '') > (s.last || '') || ((t.last || '') === (s.last || '') && (t.count || 0) > (s.count || 0))) s = t;
+  return { done, streak: { last: s.last || '', count: s.count || 0 } };
+}
+
+let syncTimer = null;
+function scheduleSync() {
+  if (!TOKEN) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => { acct('save', { progress: loadP() }).catch(() => {}); }, 800);
 }
 function markDone(title, n, score, total) {
   const p = loadP();
@@ -293,7 +360,7 @@ function renderStats() {
 /* ---------- ekrany ---------- */
 
 function showHome() {
-  reset(); setAccent(); renderStats();
+  reset(); atHome = true; setAccent(); renderStats();
   const keys = Object.keys(loadP().done);
   const lessons = keys.filter(k => !k.endsWith('#quiz')).length;
   const quizzes = keys.length - lessons;
@@ -304,6 +371,7 @@ function showHome() {
       ? 'Ukończone lekcje: ' + lessons + ', quizy: ' + quizzes + '.'
       : 'Wybierz kategorię albo wyszukaj własny temat.', 'meta')
   );
+  if (!USER) out.append(linkBtn('Załóż konto, aby mieć postępy na każdym urządzeniu', () => showAuth('register')));
 
   const form = el('form', undefined, 'search');
   const input = el('input');
@@ -526,8 +594,247 @@ function sourceLine(art) {
   return sm;
 }
 
+/* ---------- konto: sam nick i hasło ---------- */
+
+const EMOJIS = ['🦊','🐼','🐙','🦉','🐸','🐯','🦄','🐧','🐢','🦁','🐨','🐝','🚀','🎧','🎮','🌵','🍕','⚡','🔥','🌙','🧠','🎯','👾','🤖'];
+const COLORS = ['#2563eb','#7c3aed','#db2777','#e11d48','#b45309','#047857','#0891b2','#475569'];
+const acctEl = document.getElementById('acct');
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+async function acct(action, body) {
+  const headers = { 'content-type': 'application/json' };
+  if (TOKEN) headers.authorization = 'Bearer ' + TOKEN;
+  let r;
+  try {
+    r = await fetch('/account', { method: 'POST', headers, body: JSON.stringify(Object.assign({ action }, body || {})) });
+  } catch (e) {
+    throw new Error('Brak połączenia z serwerem.');
+  }
+  let d = {};
+  try { d = await r.json(); } catch (e) {}
+  if (!r.ok) {
+    const e = new Error(d.error || (r.status === 404
+      ? 'Konto jest jeszcze niedostępne (funkcja nie została wdrożona).'
+      : 'Błąd serwera.'));
+    e.status = r.status;
+    throw e;
+  }
+  return d;
+}
+
+function avatarEl(av, size) {
+  const d = el('span', (av && av.emoji) || '🙂', 'avatar');
+  d.style.background = (av && av.color) || '#475569';
+  d.style.width = d.style.height = size + 'px';
+  d.style.fontSize = Math.round(size * 0.55) + 'px';
+  return d;
+}
+
+function renderHeader() {
+  acctEl.replaceChildren();
+  acctEl.className = 'acct' + (USER ? '' : ' guest');
+  if (USER) {
+    acctEl.append(avatarEl(USER.avatar, 36));
+    acctEl.setAttribute('aria-label', 'Konto: ' + USER.nick);
+  } else {
+    acctEl.textContent = 'Zaloguj się';
+    acctEl.removeAttribute('aria-label');
+  }
+}
+acctEl.onclick = () => showAccount();
+
+function signOutLocal() {
+  TOKEN = null; USER = null;
+  lsDel('wc_token'); lsDel('wc_user');
+}
+
+function onAuthSuccess(d) {
+  TOKEN = d.token; USER = d.user;
+  lsSet('wc_token', TOKEN);
+  lsSet('wc_user', JSON.stringify(USER));
+  // łączymy: postępy z serwera + z tego urządzenia + z gry bez konta
+  let merged = mergeP(normP(d.progress), readP(progKey()) || emptyP());
+  const guest = readP(LS_KEY);
+  if (guest) { merged = mergeP(merged, guest); lsDel(LS_KEY); }
+  lsSet(progKey(), JSON.stringify(merged));
+  acct('save', { progress: merged }).catch(() => {});
+  renderHeader(); renderStats();
+}
+
+async function initAuth() {
+  if (!TOKEN) return;
+  try {
+    const d = await acct('me');
+    USER = d.user;
+    lsSet('wc_user', JSON.stringify(USER));
+    const merged = mergeP(normP(d.progress), readP(progKey()) || emptyP());
+    lsSet(progKey(), JSON.stringify(merged));
+    acct('save', { progress: merged }).catch(() => {});
+  } catch (e) {
+    if (e.status === 401) signOutLocal();
+  }
+  renderHeader(); renderStats();
+  if (atHome) showHome();
+}
+
+function field(label, type, autocomplete) {
+  const wrap = el('label', undefined, 'field');
+  wrap.append(el('span', label));
+  const row = el('div', undefined, 'inp');
+  const input = el('input');
+  input.type = type;
+  input.autocomplete = autocomplete;
+  input.maxLength = type === 'password' ? 72 : 20;
+  input.autocapitalize = 'none';
+  input.spellcheck = false;
+  row.append(input);
+  if (type === 'password') {
+    const tg = el('button', 'Pokaż');
+    tg.type = 'button';
+    tg.onclick = () => {
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      tg.textContent = show ? 'Ukryj' : 'Pokaż';
+    };
+    row.append(tg);
+  }
+  wrap.append(row);
+  return { wrap, input };
+}
+
+function avatarPicker(av) {
+  const box = el('div', undefined, 'picker');
+  const prev = el('div', undefined, 'prev');
+  const emojis = el('div', undefined, 'emojis');
+  const sw = el('div', undefined, 'swatches');
+  function draw() {
+    prev.replaceChildren(avatarEl(av, 88));
+    eb.forEach((b, i) => b.classList.toggle('on', EMOJIS[i] === av.emoji));
+    cb.forEach((b, i) => b.classList.toggle('on', COLORS[i] === av.color));
+  }
+  const eb = EMOJIS.map(e => {
+    const b = el('button', e);
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Postać ' + e);
+    b.onclick = () => { av.emoji = e; draw(); };
+    emojis.append(b);
+    return b;
+  });
+  const cb = COLORS.map(c => {
+    const b = el('button');
+    b.type = 'button';
+    b.style.background = c;
+    b.setAttribute('aria-label', 'Kolor ' + c);
+    b.onclick = () => { av.color = c; draw(); };
+    sw.append(b);
+    return b;
+  });
+  draw();
+  box.append(prev, el('p', 'Wybierz postać', 'meta'), emojis, el('p', 'Wybierz kolor', 'meta'), sw);
+  return box;
+}
+
+function showAuth(mode) {
+  const reg = mode === 'register';
+  reset(); setAccent();
+  const avatar = { emoji: pick(EMOJIS), color: pick(COLORS) };
+
+  const tabs = el('div', undefined, 'tabs');
+  const t1 = el('button', 'Logowanie', reg ? '' : 'on'); t1.type = 'button';
+  const t2 = el('button', 'Nowe konto', reg ? 'on' : ''); t2.type = 'button';
+  t1.onclick = () => showAuth('login');
+  t2.onclick = () => showAuth('register');
+  tabs.append(t1, t2);
+
+  const nick = field('Nick', 'text', 'username');
+  const pass = field('Hasło', 'password', reg ? 'new-password' : 'current-password');
+  const err = el('p', '', 'err');
+  err.hidden = true;
+  err.setAttribute('role', 'alert');
+  const showErr = m => { err.textContent = m; err.hidden = false; };
+
+  const form = el('form');
+  form.noValidate = true;
+  const submit = el('button', reg ? 'Załóż konto' : 'Zaloguj się', 'btn submit');
+  submit.type = 'submit';
+  form.append(nick.wrap, pass.wrap);
+  if (reg) {
+    form.append(el('p', 'Nick: 3-20 znaków (litery, cyfry, _ . -). Hasło: minimum 8 znaków. Nie podajesz e-maila, więc nie da się odzyskać hasła. Zapamiętaj je.', 'hint'));
+    form.append(avatarPicker(avatar));
+  }
+  form.append(err, submit);
+
+  form.onsubmit = async e => {
+    e.preventDefault();
+    err.hidden = true;
+    const n = nick.input.value.trim();
+    const p = pass.input.value;
+    if (!/^[\p{L}\p{N}_.-]{3,20}$/u.test(n)) return showErr('Nick ma 3-20 znaków: litery, cyfry, _ . lub -.');
+    if (reg && p.length < 8) return showErr('Hasło musi mieć co najmniej 8 znaków.');
+    if (!reg && !p) return showErr('Podaj hasło.');
+    submit.disabled = true;
+    submit.textContent = 'Chwileczkę...';
+    try {
+      const d = await acct(reg ? 'register' : 'login',
+        reg ? { nick: n, password: p, avatar } : { nick: n, password: p });
+      onAuthSuccess(d);
+      showHome();
+    } catch (ex) {
+      showErr(ex.message);
+      submit.disabled = false;
+      submit.textContent = reg ? 'Załóż konto' : 'Zaloguj się';
+    }
+  };
+
+  out.append(
+    linkBtn('‹ Wróć', showHome),
+    el('h1', reg ? 'Załóż konto' : 'Zaloguj się', 'big'),
+    el('p', 'Bez e-maila i danych osobowych, tylko nick i hasło. Możesz też korzystać z aplikacji bez konta, wtedy postępy zapisują się tylko na tym urządzeniu.', 'meta'),
+    tabs, form
+  );
+}
+
+function showAccount() {
+  if (!USER) return showAuth('login');
+  reset(); setAccent();
+  const keys = Object.keys(loadP().done);
+  const lessons = keys.filter(k => !k.endsWith('#quiz')).length;
+  const quizzes = keys.length - lessons;
+  const s = streakInfo();
+  const av = { emoji: (USER.avatar && USER.avatar.emoji) || '🙂', color: (USER.avatar && USER.avatar.color) || '#475569' };
+
+  const info = el('div');
+  info.append(el('h1', USER.nick, 'big'),
+    el('p', 'Lekcje: ' + lessons + ', quizy: ' + quizzes + ', seria: ' + s + ' ' + daysWord(s), 'meta'));
+  const prof = el('div', undefined, 'profile');
+  prof.append(avatarEl(USER.avatar, 72), info);
+
+  const save = el('button', 'Zapisz avatar', 'btn');
+  save.onclick = async () => {
+    save.disabled = true;
+    try {
+      const d = await acct('avatar', { avatar: av });
+      USER.avatar = d.avatar;
+      lsSet('wc_user', JSON.stringify(USER));
+      renderHeader();
+      save.textContent = 'Zapisano';
+    } catch (e) {
+      save.textContent = 'Nie udało się zapisać';
+    }
+    setTimeout(() => { save.textContent = 'Zapisz avatar'; save.disabled = false; }, 1500);
+  };
+  const logout = el('button', 'Wyloguj się', 'btn sec');
+  logout.onclick = () => { signOutLocal(); renderHeader(); renderStats(); showHome(); };
+
+  const stack = el('div', undefined, 'stack');
+  stack.append(save, logout);
+  out.append(linkBtn('‹ Wróć', showHome), prof, el('h2', 'Zmień avatar', 'q'), avatarPicker(av), stack);
+}
+
 document.getElementById('home').onclick = e => { e.preventDefault(); showHome(); };
 showHome();
+renderHeader();
+initAuth();
 </script>
 </body>
 </html>
